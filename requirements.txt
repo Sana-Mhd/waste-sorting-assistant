@@ -1,0 +1,20 @@
+# Web interface
+streamlit>=1.38
+
+# Data & rules
+SQLAlchemy>=2.0
+
+# Analytics
+pandas>=2.2
+numpy>=1.26
+plotly>=5.22
+
+# AI coach
+openai>=1.40
+python-dotenv>=1.0
+
+# Classification (subsystem 1 - add the real framework here)
+Pillow>=10.3
+
+# Tests
+pytest>=8.0
