@@ -1,0 +1,27 @@
+{
+  "region": {"code": "DO", "name": "Dortmund"},
+  "verified": "2026-10-16",
+  "sources": [
+    "EDG Bio 1x1 brochure, edition 08/2025 (edg.de): what belongs in the Biotonne and what does not",
+    "DOWERT Dortmunder Wertstoff GmbH (dowert.de): what belongs in the combined Wertstofftonne (yellow bin)",
+    "EDG press releases 2020 and 2023 (edg.de): paper depot containers, grey bin contents",
+    "Umweltbundesamt (umweltbundesamt.de): glass container rules, colour separation (national rule, no EDG page found)"
+  ],
+  "rules": [
+    {
+      "category": "recyclable",
+      "bin": "Yellow bin (Wertstofftonne), blue paper bin (Papiertonne) or glass container, depending on the material",
+      "reason": "Plastic, metal and drink-carton packaging, and small plastic or metal household items, go in the yellow bin. Paper and cardboard go in the blue paper bin or a paper depot container. Glass bottles and jars go in the glass containers, sorted by colour."
+    },
+    {
+      "category": "compostable",
+      "bin": "Brown bin (Biotonne)",
+      "reason": "Food leftovers, fruit and vegetable scraps, coffee grounds, tea bags, eggshells, lawn clippings and leaves go in the brown bin. No plastic bags, not even bags sold as compostable."
+    },
+    {
+      "category": "landfill",
+      "bin": "Grey bin (graue Tonne, residual waste)",
+      "reason": "Everything that fits no other bin goes here, for example crockery, wallpaper scraps, renovation leftovers, diapers, hygiene items, plasters and cat litter."
+    }
+  ]
+}
