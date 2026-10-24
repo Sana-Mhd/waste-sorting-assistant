@@ -1,0 +1,39 @@
+=== test: 484 images ===
+Overall accuracy: 0.897
+
+Per-class accuracy:
+  cardboard  0.859  (n=64)
+  glass      0.950  (n=20)
+  metal      0.913  (n=46)
+  organic    1.000  (n=115)
+  paper      0.929  (n=84)
+  plastic    0.913  (n=46)
+  trash      0.761  (n=109)
+
+              precision    recall  f1-score   support
+
+   cardboard       0.93      0.86      0.89        64
+       glass       0.95      0.95      0.95        20
+       metal       0.81      0.91      0.86        46
+     organic       0.97      1.00      0.99       115
+       paper       0.85      0.93      0.89        84
+     plastic       0.79      0.91      0.85        46
+       trash       0.92      0.76      0.83       109
+
+    accuracy                           0.90       484
+   macro avg       0.89      0.90      0.89       484
+weighted avg       0.90      0.90      0.90       484
+
+Threshold table:
+  threshold  coverage  accuracy_on_kept
+       0.40    99.6%             0.898
+       0.45    98.1%             0.907
+       0.50    96.5%             0.912
+       0.55    94.2%             0.919
+       0.60    92.8%             0.920
+       0.65    90.9%             0.925
+       0.70    88.2%             0.937
+       0.75    86.2%             0.945
+       0.80    83.7%             0.943
+       0.85    80.2%             0.948
+       0.90    75.8%             0.959

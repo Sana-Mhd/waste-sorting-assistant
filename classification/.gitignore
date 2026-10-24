@@ -1,0 +1,6 @@
+# Photos are large and can be rebuilt with training/prepare_dataset.py
+raw/
+data/
+downloads/
+# The trained model IS committed (the root .gitignore excludes models/*.pt)
+!models/*.pt

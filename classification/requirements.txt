@@ -1,0 +1,12 @@
+# Subsystem 1: Classification Engine
+# Docker: install CPU-only torch first, see README.md
+torch>=2.2
+torchvision>=0.17
+Pillow>=10.0
+numpy>=1.26
+# only used by training/evaluate.py
+scikit-learn>=1.3
+matplotlib>=3.8
+# tests (the contract test imports data_rules, which needs SQLAlchemy)
+pytest>=8.0
+SQLAlchemy>=2.0
