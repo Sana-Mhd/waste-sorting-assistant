@@ -1,0 +1,13 @@
+# Subsystem 3: AI Coach & Analytics
+
+# the language model
+openai>=1.40
+
+# analytics and dashboard charts
+pandas>=2.2
+numpy>=1.26
+plotly>=5.22
+
+# tests (the contract tests import data_rules, which needs SQLAlchemy)
+pytest>=8.0
+SQLAlchemy>=2.0

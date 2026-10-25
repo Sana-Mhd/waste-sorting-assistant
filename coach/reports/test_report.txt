@@ -1,0 +1,102 @@
+Subsystem 3 — AI Coach & Analytics
+Unit test report
+Generated with: python -m pytest -v
+Python 3.13.16  ·  2026-10-25
+
+The suite runs offline: no network connection, no API key and no database
+file are needed, and a run leaves no file behind.
+
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: .
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.15.1
+collecting ... collected 83 items
+
+tests/test_analytics.py::test_the_frame_has_one_row_per_scan PASSED      [  1%]
+tests/test_analytics.py::test_an_empty_database_gives_an_empty_frame PASSED [  2%]
+tests/test_analytics.py::test_the_composition_adds_up_to_one_hundred PASSED [  3%]
+tests/test_analytics.py::test_the_composition_matches_the_data PASSED    [  4%]
+tests/test_analytics.py::test_the_recycling_rate_counts_recyclable_and_compostable PASSED [  6%]
+tests/test_analytics.py::test_the_average_confidence_is_a_percentage PASSED [  7%]
+tests/test_analytics.py::test_everything_is_zero_without_data PASSED     [  8%]
+tests/test_analytics.py::test_the_trend_has_one_row_per_day PASSED       [  9%]
+tests/test_analytics.py::test_the_trend_counts_the_scans_of_each_day PASSED [ 10%]
+tests/test_analytics.py::test_a_day_without_scans_is_a_zero PASSED       [ 12%]
+tests/test_analytics.py::test_the_trend_rejects_a_zero_day_window PASSED [ 13%]
+tests/test_analytics.py::test_the_trend_is_empty_without_data PASSED     [ 14%]
+tests/test_analytics.py::test_the_top_items_are_sorted PASSED            [ 15%]
+tests/test_analytics.py::test_the_summary_collects_every_headline_number PASSED [ 16%]
+tests/test_analytics.py::test_the_summary_of_an_empty_region_is_zero PASSED [ 18%]
+tests/test_analytics.py::test_another_region_has_no_scans PASSED         [ 19%]
+tests/test_cache.py::test_the_base_cache_cannot_be_instantiated PASSED   [ 20%]
+tests/test_cache.py::test_the_key_ignores_case_and_spaces PASSED         [ 21%]
+tests/test_cache.py::test_different_regions_get_different_keys PASSED    [ 22%]
+tests/test_cache.py::test_different_languages_get_different_keys PASSED  [ 24%]
+tests/test_cache.py::test_both_caches_store_and_return_a_text[memory] PASSED [ 25%]
+tests/test_cache.py::test_both_caches_store_and_return_a_text[sqlite] PASSED [ 26%]
+tests/test_cache.py::test_storing_the_same_key_twice_keeps_one_entry[memory] PASSED [ 27%]
+tests/test_cache.py::test_storing_the_same_key_twice_keeps_one_entry[sqlite] PASSED [ 28%]
+tests/test_cache.py::test_the_sqlite_cache_survives_a_restart PASSED     [ 30%]
+tests/test_cache.py::test_clearing_empties_the_cache PASSED              [ 31%]
+tests/test_charts.py::test_every_category_has_its_own_fixed_colour PASSED [ 32%]
+tests/test_charts.py::test_the_composition_chart_shows_one_bar_per_category PASSED [ 33%]
+tests/test_charts.py::test_the_trend_chart_has_one_point_per_day PASSED  [ 34%]
+tests/test_charts.py::test_the_top_items_chart_is_horizontal PASSED      [ 36%]
+tests/test_charts.py::test_the_charts_survive_an_empty_database PASSED   [ 37%]
+tests/test_charts.py::test_the_table_view_repeats_the_numbers_of_the_chart PASSED [ 38%]
+tests/test_coach.py::test_explain_returns_a_full_explanation PASSED      [ 39%]
+tests/test_coach.py::test_the_region_code_is_normalised PASSED           [ 40%]
+tests/test_coach.py::test_an_unknown_category_is_rejected PASSED         [ 42%]
+tests/test_coach.py::test_an_empty_item_is_rejected PASSED               [ 43%]
+tests/test_coach.py::test_the_second_question_is_answered_from_the_cache PASSED [ 44%]
+tests/test_coach.py::test_a_different_region_is_not_served_from_the_cache PASSED [ 45%]
+tests/test_coach.py::test_the_template_is_used_when_the_model_is_not_available PASSED [ 46%]
+tests/test_coach.py::test_the_template_is_used_when_the_model_fails PASSED [ 48%]
+tests/test_coach.py::test_explain_result_accepts_the_object_of_subsystem_one PASSED [ 49%]
+tests/test_coach.py::test_the_base_explainer_cannot_be_instantiated PASSED [ 50%]
+tests/test_coach.py::test_the_template_explainer_names_the_bin PASSED    [ 51%]
+tests/test_coach.py::test_the_template_explainer_can_answer_in_german PASSED [ 53%]
+tests/test_coach.py::test_a_long_answer_is_cut_to_the_promised_length PASSED [ 54%]
+tests/test_coach.py::test_the_template_also_keeps_the_word_limit PASSED  [ 55%]
+tests/test_coach.py::test_the_prompt_contains_the_rule_and_the_limit PASSED [ 56%]
+tests/test_coach.py::test_a_client_without_a_key_is_not_available PASSED [ 57%]
+tests/test_coach.py::test_sending_without_a_key_raises PASSED            [ 59%]
+tests/test_contract.py::test_the_categories_are_the_ones_subsystem_two_knows PASSED [ 60%]
+tests/test_contract.py::test_every_recycled_category_is_a_real_category PASSED [ 61%]
+tests/test_contract.py::test_the_rule_still_has_the_fields_the_coach_reads PASSED [ 62%]
+tests/test_contract.py::test_the_record_still_has_the_fields_the_analytics_read PASSED [ 63%]
+tests/test_contract.py::test_the_coach_works_on_the_real_rule_engine PASSED [ 65%]
+tests/test_contract.py::test_the_analytics_work_on_the_real_data_access PASSED [ 66%]
+tests/test_contract.py::test_the_cache_key_uses_the_region_code_of_subsystem_two PASSED [ 67%]
+tests/test_requirements.py::test_f1_an_explanation_is_generated_for_a_classified_item PASSED [ 68%]
+tests/test_requirements.py::test_f2_the_rule_of_the_users_region_is_applied PASSED [ 69%]
+tests/test_requirements.py::test_f3_the_result_is_a_structured_object PASSED [ 71%]
+tests/test_requirements.py::test_f4_the_same_question_is_answered_from_the_cache PASSED [ 72%]
+tests/test_requirements.py::test_f5_a_stored_text_is_served_when_the_model_is_unavailable PASSED [ 73%]
+tests/test_requirements.py::test_f6_scans_are_aggregated_into_a_waste_composition PASSED [ 74%]
+tests/test_requirements.py::test_f7_the_recycling_rate_is_computed_per_region PASSED [ 75%]
+tests/test_requirements.py::test_f8_the_trend_over_a_period_is_computed PASSED [ 77%]
+tests/test_requirements.py::test_f9_the_dashboard_charts_are_rendered PASSED [ 78%]
+tests/test_requirements.py::test_f10_the_public_interface_is_offered_to_the_other_subsystems PASSED [ 79%]
+tests/test_requirements.py::test_f10_one_call_builds_both_services PASSED [ 80%]
+tests/test_requirements.py::test_n1_an_explanation_is_returned_within_three_seconds PASSED [ 81%]
+tests/test_requirements.py::test_n1_the_wait_for_the_model_is_bounded PASSED [ 83%]
+tests/test_requirements.py::test_n2_a_cached_answer_is_returned_within_200_milliseconds PASSED [ 84%]
+tests/test_requirements.py::test_n3_the_key_is_read_from_the_environment PASSED [ 85%]
+tests/test_requirements.py::test_n3_no_key_is_written_into_the_source_code PASSED [ 86%]
+tests/test_requirements.py::test_n3_the_key_never_appears_in_a_log_line_or_traceback PASSED [ 87%]
+tests/test_requirements.py::test_n4_no_personal_data_is_sent_to_the_external_service PASSED [ 89%]
+tests/test_requirements.py::test_n4_the_photo_itself_never_leaves_the_system PASSED [ 90%]
+tests/test_requirements.py::test_n5_an_explanation_is_never_longer_than_sixty_words PASSED [ 91%]
+tests/test_requirements.py::test_n6_the_chart_colours_are_distinguishable_and_fixed PASSED [ 92%]
+tests/test_requirements.py::test_n6_colour_is_never_the_only_encoding PASSED [ 93%]
+tests/test_requirements.py::test_n7_the_tests_need_no_network_connection PASSED [ 95%]
+tests/test_requirements.py::test_n8_the_application_stays_usable_when_the_service_fails PASSED [ 96%]
+tests/test_requirements.py::test_n9_explanations_are_available_in_german_and_english PASSED [ 97%]
+tests/test_requirements.py::test_n10_another_provider_can_replace_the_language_model PASSED [ 98%]
+tests/test_requirements.py::test_n10_the_cache_can_be_replaced_the_same_way PASSED [100%]
+
+============================== 83 passed in 1.41s ==============================
