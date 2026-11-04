@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import time
+from pathlib import Path
 
 import pytest
 import torch
@@ -161,7 +162,7 @@ def test_config_reads_environment(monkeypatch):
     monkeypatch.setenv("MODEL_PATH", "/tmp/model.pt")
     config = ClassificationConfig.from_env()
     assert config.confidence_threshold == 0.75
-    assert str(config.model_path) == "/tmp/model.pt"
+    assert config.model_path == Path("/tmp/model.pt")
 
 
 @pytest.mark.parametrize("value", ["abc", "1.5", "-0.1"])

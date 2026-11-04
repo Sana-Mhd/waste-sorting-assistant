@@ -66,7 +66,6 @@ Locally the database is `data/waste.db` in the folder you start from.
 ## Design
 
 Class diagram: **[docs/class_diagram.png](docs/class_diagram.png)**
-(redraw it with `python docs/make_class_diagram.py`, which needs matplotlib).
 
 | File | Content |
 |---|---|

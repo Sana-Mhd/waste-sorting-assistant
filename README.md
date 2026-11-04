@@ -100,6 +100,10 @@ Only `data_rules` talks to the project database, and only `coach` calls the Open
 
 ## Class diagrams
 
+### Subsystem 1: Classification Engine
+
+![Class diagram of subsystem 1](classification/docs/class_diagram.png)
+
 ### Subsystem 2: Data & Rules
 
 ![Class diagram of subsystem 2](data_rules/docs/class_diagram.png)
