@@ -9,7 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # CPU-only torch first: the default wheel brings several GB of CUDA the app never uses.
-RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN pip install torch==2.15.0 torchvision==0.29.2 --index-url https://download.pytorch.org/whl/cpu
 
 COPY web/requirements.txt web/requirements.txt
 RUN pip install -r web/requirements.txt

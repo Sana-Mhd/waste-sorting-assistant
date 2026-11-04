@@ -2,7 +2,9 @@
 import pytest
 
 from classification import ClassificationEngine
+from coach import CoachConfig
 from web import ServiceStartupError, WebConfig, build_services, resolve_region
+from web.config import load_env_file
 
 
 def test_all_services_are_built(services):
@@ -18,6 +20,28 @@ def test_without_api_key_the_coach_uses_templates(services):
 def test_bad_database_url_gives_a_clear_startup_error():
     with pytest.raises(ServiceStartupError, match="could not start"):
         build_services(WebConfig(database_url="notadatabase://x"))
+
+
+def test_env_file_gives_the_coach_its_key(tmp_path, monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    env_file = tmp_path / ".env"
+    env_file.write_text("OPENAI_API_KEY=sk-from-the-file\n", encoding="utf-8")
+
+    assert load_env_file(env_file) is True
+    assert CoachConfig.from_env().api_key == "sk-from-the-file"
+
+
+def test_env_file_does_not_replace_a_value_already_set(tmp_path, monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-already-set")
+    env_file = tmp_path / ".env"
+    env_file.write_text("OPENAI_API_KEY=sk-from-the-file\n", encoding="utf-8")
+
+    load_env_file(env_file)
+    assert CoachConfig.from_env().api_key == "sk-already-set"
+
+
+def test_missing_env_file_is_fine(tmp_path):
+    assert load_env_file(tmp_path / "no_such_file") is False
 
 
 def test_config_defaults(monkeypatch):
