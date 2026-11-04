@@ -100,7 +100,7 @@ Without `?region=` the default region is used.
 | `GET /api/results?region=DO` | every stored scan, oldest first: `id`, `item`, `category`, `confidence`, `region_code`, `created_at` (UTC) |
 | `GET /api/summary?region=DO` | `region_code`, `total_scans`, `recycling_rate`, `composition`, `average_confidence` |
 
-An unknown region gets a 404 and a database failure a 503, both as `{"error": "..."}`.
+An unknown region gets a 404 with `{"error": "..."}`.
 
 ```bash
 curl http://localhost:8501/api/summary?region=DO
@@ -112,8 +112,7 @@ curl http://localhost:8501/api/summary?region=DO
   the pages only display a `ScanOutcome`.
 - **Errors:** `InvalidImageError` (subsystem 1) is shown as a friendly message;
   a failing start raises `ServiceStartupError` and every page shows its readable message;
-  a failing save is logged and the user still gets the answer;
-  a `DatabaseError` (subsystem 2) gives a readable page, or a JSON error from the API.
+  a failing save is logged and the user still gets the answer.
 
 ## Tests
 
@@ -122,13 +121,13 @@ cd web
 python -m pytest -v
 ```
 
-66 tests, no network, no OpenAI key, no files left behind:
+64 tests, no network, no OpenAI key, no files left behind:
 
 | File | Covers |
 |---|---|
 | `test_services.py` | all services start on a temporary database, bad `DATABASE_URL`, settings, the `.env` file, region names |
 | `test_workflow.py` | confident scan is explained and saved, uncertain scan is not, every category, invalid upload, unknown region, scans reach the dashboard |
-| `test_api.py` | every JSON route, the default region, unknown regions, uncertain scans, a failing database |
+| `test_api.py` | every JSON route, the default region, unknown regions, uncertain scans |
 | `test_scan_store.py` | stored scans can be read again, unknown ids, the oldest scan is dropped |
 | `test_app.py` | the real `app.py` with Flask's test client: all pages, sidebar, a photo is saved once per upload, uncertain and broken uploads, the upload limits, the dashboard charts, a failed start |
 

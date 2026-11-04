@@ -13,7 +13,7 @@ from pathlib import Path
 
 from .config import CATEGORIES
 from .data_access import DataAccessLayer
-from .exceptions import NoRuleFilesError, RuleFileError
+from .exceptions import DataRulesError
 
 DEFAULT_RULES_DIR = Path(__file__).parent / "rules"
 
@@ -26,13 +26,13 @@ def load_rule_files(directory: Path | str | None = None) -> list[dict]:
     """Read and validate every *.json file in the directory.
 
     Raises:
-        NoRuleFilesError: if the directory contains no rule files.
-        RuleFileError: if a file is not valid JSON or has the wrong content.
+        FileNotFoundError: if the directory contains no rule files.
+        DataRulesError: if a file is not valid JSON or has the wrong content.
     """
     directory = Path(directory) if directory else rules_dir()
     files = sorted(directory.glob("*.json"))
     if not files:
-        raise NoRuleFilesError(f"no rule files found in {directory}")
+        raise FileNotFoundError(f"no rule files found in {directory}")
     result = []
     for path in files:
         try:
@@ -47,7 +47,7 @@ def load_rule_files(directory: Path | str | None = None) -> list[dict]:
                 if not rule["bin"] or not rule["reason"]:
                     raise ValueError("bin and reason must not be empty")
         except (KeyError, TypeError, ValueError) as exc:
-            raise RuleFileError(f"invalid rule file {path.name}: {exc}") from exc
+            raise DataRulesError(f"invalid rule file {path.name}: {exc}") from exc
         result.append(data)
     return result
 

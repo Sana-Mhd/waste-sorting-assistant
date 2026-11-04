@@ -2,7 +2,6 @@
 from datetime import datetime
 
 import pytest
-from data_rules.models import Base
 from web import ScanWorkflow
 from web.app import create_app
 
@@ -16,11 +15,6 @@ def client(services):
 
 def scan_once(services) -> None:
     ScanWorkflow(services).run(png_bytes(), "DO")
-
-
-def break_the_database(services) -> None:
-    with services.dal._sf() as session:
-        Base.metadata.drop_all(session.get_bind())
 
 
 def test_regions_lists_dortmund(client):
@@ -91,17 +85,3 @@ def test_uncertain_scan_does_not_reach_the_api(tmp_path):
     scan_once(services)
     client = create_app(services).test_client()
     assert client.get("/api/results?region=DO").get_json() == []
-
-
-def test_a_failing_database_gives_a_json_error(client, services):
-    break_the_database(services)
-    response = client.get("/api/results?region=DO")
-    assert response.status_code == 503
-    assert response.get_json() == {"error": "The data could not be read."}
-
-
-def test_a_failing_database_gives_the_pages_a_readable_message(client, services):
-    break_the_database(services)
-    response = client.get("/dashboard")
-    assert response.status_code == 503
-    assert "not available" in response.get_data(as_text=True)

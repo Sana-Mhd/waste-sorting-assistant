@@ -10,18 +10,15 @@ All data comes through the services of subsystems 2 and 3, never from SQLite dir
 """
 from __future__ import annotations
 
-import logging
 from dataclasses import asdict
 
 from flask import Blueprint, jsonify, request
 from flask.typing import ResponseReturnValue
 
-from data_rules import ClassificationRecord, DataRulesError, UnknownRegionError
+from data_rules import ClassificationRecord, DataRulesError
 
 from .config import WebConfig
 from .services import AppServices
-
-logger = logging.getLogger(__name__)
 
 
 def record_to_json(record: ClassificationRecord) -> dict:
@@ -42,11 +39,11 @@ def create_api(services: AppServices, config: WebConfig) -> Blueprint:
         """The region in the address, or the default one.
 
         Raises:
-            UnknownRegionError: if the database does not know the region.
+            DataRulesError: if the database does not know the region.
         """
         code = (request.args.get("region") or config.default_region).strip().upper()
         if not services.dal.region_exists(code):
-            raise UnknownRegionError(f"unknown region {code!r}")
+            raise DataRulesError(f"unknown region {code!r}")
         return code
 
     @api.get("/regions")
@@ -66,13 +63,8 @@ def create_api(services: AppServices, config: WebConfig) -> Blueprint:
     def summary() -> ResponseReturnValue:
         return jsonify(asdict(services.analytics.summary(requested_region())))
 
-    @api.errorhandler(UnknownRegionError)
-    def unknown_region(error: UnknownRegionError) -> ResponseReturnValue:
-        return jsonify(error=str(error)), 404
-
     @api.errorhandler(DataRulesError)
-    def data_problem(error: DataRulesError) -> ResponseReturnValue:
-        logger.error("API request failed: %s", error)
-        return jsonify(error="The data could not be read."), 503
+    def unknown_region(error: DataRulesError) -> ResponseReturnValue:
+        return jsonify(error=str(error)), 404
 
     return api

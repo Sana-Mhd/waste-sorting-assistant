@@ -3,7 +3,7 @@ import logging
 
 from .config import CATEGORIES
 from .data_access import DataAccessLayer
-from .exceptions import InvalidDataError
+from .exceptions import DataRulesError
 from .schemas import Rule
 
 log = logging.getLogger(__name__)
@@ -23,12 +23,12 @@ class RuleEngine:
     def get_rule(self, category: str, region: str) -> Rule:
         """Return the bin for this category in this region.
 
-        Raises InvalidDataError (a ValueError) for an unknown category, because
+        Raises DataRulesError (a ValueError) for an unknown category, because
         that is a bug in the caller. For an unknown region or a missing rule it
         returns a generic fallback and logs a warning, so the user still gets an answer.
         """
         if category not in CATEGORIES:
-            raise InvalidDataError(f"category must be one of {CATEGORIES}, got {category!r}")
+            raise DataRulesError(f"category must be one of {CATEGORIES}, got {category!r}")
         rule = self._dal.get_rule(category, region)
         if rule is not None:
             return rule
