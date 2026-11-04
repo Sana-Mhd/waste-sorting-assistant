@@ -7,7 +7,7 @@ and the data access layer used by the other three subsystems.
 
 ```bash
 pip install -r requirements.txt
-python -m pytest            # 42 tests, in-memory database
+python -m pytest            # 47 tests, in-memory database
 ```
 
 The database path comes from the `DATABASE_URL` environment variable

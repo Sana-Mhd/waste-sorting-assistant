@@ -32,6 +32,15 @@ class AnalyticsService:
         """
         self.dal = data_access
 
+    @property
+    def dal(self):
+        """The data_rules.DataAccessLayer (subsystem 2) that holds the scans."""
+        return self._dal
+
+    @dal.setter
+    def dal(self, data_access) -> None:
+        self._dal = data_access
+
     # --- from stored rows to a table ---------------------------------------
 
     def frame(

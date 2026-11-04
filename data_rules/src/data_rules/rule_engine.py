@@ -20,6 +20,15 @@ class RuleEngine:
     def __init__(self, dal: DataAccessLayer):
         self._dal = dal
 
+    @property
+    def dal(self) -> DataAccessLayer:
+        """The data access layer this engine reads the rules from."""
+        return self._dal
+
+    @dal.setter
+    def dal(self, dal: DataAccessLayer) -> None:
+        self._dal = dal
+
     def get_rule(self, category: str, region: str) -> Rule:
         """Return the bin for this category in this region.
 

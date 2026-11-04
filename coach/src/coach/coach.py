@@ -42,6 +42,51 @@ class CoachService:
         self.explainer = explainer or LanguageModelExplainer(config=self.config)
         self.fallback = fallback or TemplateExplainer(self.config.language, self.config.max_words)
 
+    @property
+    def config(self) -> CoachConfig:
+        """The settings of the coach."""
+        return self._config
+
+    @config.setter
+    def config(self, config: CoachConfig) -> None:
+        self._config = config
+
+    @property
+    def rules(self):
+        """The data_rules.RuleEngine (subsystem 2) that knows the bins."""
+        return self._rules
+
+    @rules.setter
+    def rules(self, rule_engine) -> None:
+        self._rules = rule_engine
+
+    @property
+    def cache(self) -> BaseCache:
+        """Where finished explanations are stored."""
+        return self._cache
+
+    @cache.setter
+    def cache(self, cache: BaseCache) -> None:
+        self._cache = cache
+
+    @property
+    def explainer(self) -> BaseExplainer:
+        """The preferred explainer."""
+        return self._explainer
+
+    @explainer.setter
+    def explainer(self, explainer: BaseExplainer) -> None:
+        self._explainer = explainer
+
+    @property
+    def fallback(self) -> BaseExplainer:
+        """The explainer used when the preferred one is unavailable."""
+        return self._fallback
+
+    @fallback.setter
+    def fallback(self, fallback: BaseExplainer) -> None:
+        self._fallback = fallback
+
     def _default_cache(self) -> BaseCache:
         """A database-backed cache, or an in-memory one when the file cannot be opened."""
         try:

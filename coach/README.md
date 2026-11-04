@@ -14,7 +14,7 @@ University of Applied Sciences and Arts Dortmund, winter 2026.
 
 ```bash
 pip install -r requirements.txt
-python -m pytest                 # 83 tests, no network, no API key, no files left behind
+python -m pytest                 # 86 tests, no network, no API key, no files left behind
                                  # (7 of them are skipped if subsystem 2 is not next to this folder)
 ```
 
@@ -161,7 +161,7 @@ python -m pytest tests/test_requirements.py -v     # one test per requirement
 python -m pytest -v
 ```
 
-83 tests, none of which need a network connection, an API key or a database
+86 tests, none of which need a network connection, an API key or a database
 file. The last run is stored in **[reports/test_report.txt](reports/test_report.txt)**.
 
 | File | Covers |

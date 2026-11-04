@@ -52,8 +52,32 @@ def load_rule_files(directory: Path | str | None = None) -> list[dict]:
     return result
 
 
+class RuleFileLoader:
+    """Loads the rule files of one folder."""
+
+    def __init__(self, directory: Path | str | None = None) -> None:
+        """
+        Args:
+            directory: the folder with the rule files; by default rules_dir().
+        """
+        self.directory = directory or rules_dir()
+
+    @property
+    def directory(self) -> Path:
+        """The folder with the rule files."""
+        return self._directory
+
+    @directory.setter
+    def directory(self, directory: Path | str) -> None:
+        self._directory = Path(directory)
+
+    def load(self) -> list[dict]:
+        """Read and validate every rule file. See load_rule_files for the errors."""
+        return load_rule_files(self.directory)
+
+
 def seed_database(dal: DataAccessLayer, directory: Path | str | None = None) -> None:
-    for data in load_rule_files(directory):
+    for data in RuleFileLoader(directory).load():
         code = data["region"]["code"]
         dal.add_region(code, data["region"]["name"])
         for rule in data["rules"]:

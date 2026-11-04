@@ -37,6 +37,17 @@ class ScanStore:
         self._scans: OrderedDict[str, StoredScan] = OrderedDict()
         self._lock = Lock()   # the server answers several requests at the same time
 
+    @property
+    def max_scans(self) -> int:
+        """How many scans are kept before the oldest is dropped."""
+        return self._max_scans
+
+    @max_scans.setter
+    def max_scans(self, max_scans: int) -> None:
+        if max_scans < 1:
+            raise ValueError(f"max_scans must be at least 1, got {max_scans}.")
+        self._max_scans = max_scans
+
     def add(self, outcome: ScanOutcome, photo: bytes) -> str:
         """Store a scan and return the id for its result page."""
         scan_id = uuid4().hex

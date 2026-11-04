@@ -28,6 +28,15 @@ class DataAccessLayer:
     def __init__(self, session_factory: sessionmaker):
         self._sf = session_factory
 
+    @property
+    def session_factory(self) -> sessionmaker:
+        """Opens the database sessions of this layer."""
+        return self._sf
+
+    @session_factory.setter
+    def session_factory(self, session_factory: sessionmaker) -> None:
+        self._sf = session_factory
+
     # ---- regions and rules (configuration) ---------------------------------
 
     def add_region(self, code: str, name: str) -> None:

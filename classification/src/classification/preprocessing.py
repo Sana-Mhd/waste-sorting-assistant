@@ -34,6 +34,26 @@ class ImagePreprocessor:
             transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
         ])
 
+    @property
+    def max_image_mb(self) -> float:
+        """The largest accepted photo, in MB."""
+        return self._max_image_mb
+
+    @max_image_mb.setter
+    def max_image_mb(self, max_image_mb: float) -> None:
+        if max_image_mb <= 0:
+            raise ValueError(f"max_image_mb must be greater than 0, got {max_image_mb}.")
+        self._max_image_mb = max_image_mb
+
+    @property
+    def transform(self) -> transforms.Compose:
+        """The steps that turn a picture into a tensor."""
+        return self._transform
+
+    @transform.setter
+    def transform(self, transform: transforms.Compose) -> None:
+        self._transform = transform
+
     def process(self, image: ImageInput) -> torch.Tensor:
         """Return the model input tensor (1, 3, 224, 224) for a photo.
 

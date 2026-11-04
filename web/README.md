@@ -121,7 +121,7 @@ cd web
 python -m pytest -v
 ```
 
-64 tests, no network, no OpenAI key, no files left behind:
+67 tests, no network, no OpenAI key, no files left behind:
 
 | File | Covers |
 |---|---|

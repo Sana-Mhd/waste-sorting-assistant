@@ -13,7 +13,7 @@ A resident of Dortmund photographs one household waste item. The app:
 
 If the model is not confident, the app asks for a new photo instead of guessing.
 
-## Team
+## Team Overview
 
 | # | Subsystem | Folder | Owner | Identification | Details |
 |---|---|---|---|---|---|
@@ -21,6 +21,22 @@ If the model is not confident, the app asks for a new photo instead of guessing.
 | 2 | Data & Rules (SQLite, SQLAlchemy) | `data_rules/` | Fatemeh Hemmati | 7224097 MDT | [README](data_rules/README.md) |
 | 3 | AI Coach & Analytics (OpenAI, Plotly dashboard) | `coach/` | Sana Mohammadi | 7224512 MDT | [README](coach/README.md) |
 | 4 | Web Interface & Deployment (Flask, Docker) | `web/` | Amirreza Seighali | 7224661 MDT | [README](web/README.md) |
+
+### Classes for Hometask 1
+
+Each class has a constructor, initialization where needed, and getters and setters
+written as Python properties.
+
+| Member | Classes |
+|---|---|
+| Romina Hajizadeh | `ClassificationEngine`, `ImagePreprocessor`, `DummyClassifier` |
+| Fatemeh Hemmati | `DataAccessLayer`, `RuleEngine`, `RuleFileLoader` |
+| Sana Mohammadi | `CoachService`, `AnalyticsService`, `OpenAIClient` |
+| Amirreza Seighali | `BasePage`, `ScanWorkflow`, `ScanStore` |
+
+## Presentation Link
+
+Team video: *link to be added*
 
 ## Run the app
 
@@ -104,7 +120,7 @@ summary = analytics.summary("DO")
 
 Only `data_rules` talks to the project database, and only `coach` calls the OpenAI API.
 
-## Class diagrams
+## System Design
 
 ### Subsystem 1: Classification Engine
 

@@ -35,6 +35,15 @@ class BasePage(ABC):
         self.services = services
 
     @property
+    def services(self) -> AppServices:
+        """The services of subsystems 1-3 this page shows."""
+        return self._services
+
+    @services.setter
+    def services(self, services: AppServices) -> None:
+        self._services = services
+
+    @property
     def label(self) -> str:
         """Text in the page menu, e.g. "📷 Scan an item"."""
         return f"{self.icon} {self.title}"

@@ -42,6 +42,35 @@ class ClassificationEngine:
         self.preprocessor = preprocessor
         self.confidence_threshold = confidence_threshold
 
+    @property
+    def classifier(self) -> BaseClassifier:
+        """The classifier that turns a tensor into probabilities."""
+        return self._classifier
+
+    @classifier.setter
+    def classifier(self, classifier: BaseClassifier) -> None:
+        self._classifier = classifier
+
+    @property
+    def preprocessor(self) -> Preprocessor:
+        """The preprocessor that turns a photo into a tensor."""
+        return self._preprocessor
+
+    @preprocessor.setter
+    def preprocessor(self, preprocessor: Preprocessor) -> None:
+        self._preprocessor = preprocessor
+
+    @property
+    def confidence_threshold(self) -> float:
+        """Below this confidence the app asks for a new photo."""
+        return self._confidence_threshold
+
+    @confidence_threshold.setter
+    def confidence_threshold(self, threshold: float) -> None:
+        if not 0.0 <= threshold <= 1.0:
+            raise ValueError(f"Confidence threshold must be between 0 and 1, got {threshold}.")
+        self._confidence_threshold = threshold
+
     @classmethod
     def from_config(cls, config: ClassificationConfig | None = None) -> "ClassificationEngine":
         """Build the engine from the environment settings (MODEL_PATH, LABELS_PATH, ...).

@@ -25,6 +25,15 @@ class OpenAIClient:
     def __init__(self, config: CoachConfig | None = None) -> None:
         self.config = config or CoachConfig.from_env()
 
+    @property
+    def config(self) -> CoachConfig:
+        """The settings of this client: key, model and timeout."""
+        return self._config
+
+    @config.setter
+    def config(self, config: CoachConfig) -> None:
+        self._config = config
+
     def __repr__(self) -> str:
         return f"OpenAIClient(model={self.config.model!r}, available={self.is_available()})"
 

@@ -54,6 +54,37 @@ class DummyClassifier(BaseClassifier):
         self.confidence = confidence
         self.labels = tuple(labels)
 
+    @property
+    def material(self) -> str:
+        """The material this classifier always answers."""
+        return self._material
+
+    @material.setter
+    def material(self, material: str) -> None:
+        if not material:
+            raise ValueError("Material must not be empty.")
+        self._material = material
+
+    @property
+    def confidence(self) -> float:
+        """The probability given to the chosen material."""
+        return self._confidence
+
+    @confidence.setter
+    def confidence(self, confidence: float) -> None:
+        if not 0.0 <= confidence <= 1.0:
+            raise ValueError(f"Confidence must be between 0 and 1, got {confidence}.")
+        self._confidence = confidence
+
+    @property
+    def labels(self) -> tuple[str, ...]:
+        """Every material this classifier knows."""
+        return self._labels
+
+    @labels.setter
+    def labels(self, labels: tuple[str, ...] | list[str]) -> None:
+        self._labels = tuple(labels)
+
     def predict(self, tensor: torch.Tensor) -> list[tuple[str, float]]:
         """Return the fixed answer as a full, sorted probability list (the tensor is ignored)."""
         others = [label for label in self.labels if label != self.material]

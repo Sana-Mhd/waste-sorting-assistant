@@ -14,6 +14,7 @@ from .database import create_services, init_db, make_session_factory
 from .exceptions import DataRulesError
 from .rule_engine import RuleEngine
 from .schemas import ClassificationRecord, Rule
+from .seed import RuleFileLoader
 
 __all__ = [
     "CATEGORIES",
@@ -23,6 +24,7 @@ __all__ = [
     "DataRulesError",
     "Rule",
     "RuleEngine",
+    "RuleFileLoader",
     "create_services",
     "init_db",
     "make_session_factory",

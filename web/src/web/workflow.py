@@ -39,6 +39,15 @@ class ScanWorkflow:
     def __init__(self, services: AppServices) -> None:
         self.services = services
 
+    @property
+    def services(self) -> AppServices:
+        """The services of subsystems 1-3 used for a scan."""
+        return self._services
+
+    @services.setter
+    def services(self, services: AppServices) -> None:
+        self._services = services
+
     def run(self, image: bytes, region_code: str) -> ScanOutcome:
         """Process one uploaded photo.
 
