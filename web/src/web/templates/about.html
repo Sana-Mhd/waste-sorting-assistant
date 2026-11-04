@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p>
+  A resident photographs a waste item. The app recognises the material, tells you the
+  right bin for your region and explains why. Every scan feeds the municipality dashboard.
+</p>
+
+<table>
+  <thead>
+    <tr><th scope="col">Step</th><th scope="col">Subsystem</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Photo → material and category</td><td>1 · Classification Engine (MobileNetV2)</td></tr>
+    <tr><td>Category + region → bin</td><td>2 · Data &amp; Rules (SQLite)</td></tr>
+    <tr><td>Explanation and dashboard</td><td>3 · AI Coach &amp; Analytics</td></tr>
+    <tr><td>This page and Docker</td><td>4 · Web Interface &amp; Deployment</td></tr>
+  </tbody>
+</table>
+
+<p>
+  <strong>Known limits:</strong> one item per photo works best. The model was trained mostly on photos
+  with a plain background, so cluttered photos can be less accurate. When the app is not
+  sure, it asks for a new photo instead of guessing.
+</p>
+
+<p class="caption">
+  Model: {{ "demo mode" if demo_mode else "MobileNetV2" }} ·
+  Coach: {{ "OpenAI" if coach_status.language_model_available else "offline templates" }} ·
+  Cached explanations: {{ coach_status.cached_explanations }}
+</p>
+{% endblock %}

@@ -20,7 +20,7 @@ If the model is not confident, the app asks for a new photo instead of guessing.
 | 1 | Classification Engine (computer vision) | `classification/` | Romina Hajizadeh | [README](classification/README.md) |
 | 2 | Data & Rules (SQLite, SQLAlchemy) | `data_rules/` | Fatemeh Hemmati | [README](data_rules/README.md) |
 | 3 | AI Coach & Analytics (OpenAI, Plotly dashboard) | `coach/` | Sana Mohammadi | [README](coach/README.md) |
-| 4 | Web Interface & Deployment (Streamlit, Docker) | `web/` | Amirreza Seighali | [README](web/README.md) |
+| 4 | Web Interface & Deployment (Flask, Docker) | `web/` | Amirreza Seighali | [README](web/README.md) |
 
 ## Run the app
 
@@ -44,10 +44,10 @@ python -m venv .venv
 .venv\Scripts\activate
 pip install torch==2.15.0 torchvision==0.29.2 --index-url https://download.pytorch.org/whl/cpu
 pip install -r web/requirements.txt
-streamlit run web/src/web/app.py
+python web/src/web/app.py
 ```
 
-On macOS or Linux, activate with `source .venv/bin/activate` instead.
+Open http://localhost:8501. On macOS or Linux, activate with `source .venv/bin/activate` instead.
 
 ### AI explanations (optional)
 

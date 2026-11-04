@@ -1,17 +1,21 @@
 """The pages of the app. Every page shows data; the work happens in the services and the workflow."""
 from __future__ import annotations
 
+import base64
 import math
 from abc import ABC, abstractmethod
 
-import streamlit as st
-from streamlit.runtime.uploaded_file_manager import UploadedFile
+from flask import render_template, request
+from markupsafe import Markup
+from plotly.graph_objects import Figure
+from werkzeug.datastructures import FileStorage
 
 from classification import ClassificationConfig, InvalidImageError
 from coach import charts
 
+from .scan_store import ScanStore
 from .services import AppServices
-from .workflow import ScanOutcome, ScanWorkflow
+from .workflow import ScanWorkflow
 
 CATEGORY_LABELS = {
     "recyclable": "♻️ Recyclable",
@@ -21,10 +25,11 @@ CATEGORY_LABELS = {
 
 
 class BasePage(ABC):
-    """A page of the app. Subclasses only decide what to draw."""
+    """A page of the app. Subclasses only decide what to show."""
 
     title: str = ""
     icon: str = ""
+    endpoint: str = ""      # the name of the page's Flask route, used for the links
 
     def __init__(self, services: AppServices) -> None:
         self.services = services
@@ -35,8 +40,8 @@ class BasePage(ABC):
         return f"{self.icon} {self.title}"
 
     @abstractmethod
-    def render(self, region_code: str) -> None:
-        """Draw the page for the selected region."""
+    def render(self, region_code: str) -> str:
+        """Return the HTML of the page for the selected region."""
 
 
 class ScanPage(BasePage):
@@ -44,79 +49,50 @@ class ScanPage(BasePage):
 
     title = "Scan an item"
     icon = "📷"
+    endpoint = "scan_page"
 
-    def __init__(self, services: AppServices) -> None:
+    def __init__(self, services: AppServices, store: ScanStore | None = None) -> None:
         super().__init__(services)
         self.workflow = ScanWorkflow(services)
+        self.store = store or ScanStore()
 
-    def render(self, region_code: str) -> None:
-        st.header(self.title)
-        if self.services.classifier.is_demo_mode:
-            st.info("Demo mode: no trained model was found, so every photo gets the same answer.")
+    def handle_upload(self, photo: FileStorage | None, region_code: str) -> str:
+        """Scan an uploaded photo once and return the id of its result page.
 
-        # Show the classifier's real limit; Streamlit would otherwise show its own 200 MB default.
-        photo = st.file_uploader(
-            "Photo of one waste item",
-            type=["jpg", "jpeg", "png"],
-            max_upload_size=math.ceil(ClassificationConfig.from_env().max_image_mb),
-        )
-        if photo is None:
-            st.caption("Take a photo of a single item on a calm background and upload it.")
-            return
-
-        # Classify first: a broken file must give a friendly message, and st.image would crash on it.
-        try:
-            with st.spinner("Looking at your photo..."):
-                outcome = self._scan_once(photo, region_code)
-        except InvalidImageError as error:
-            st.error(str(error))
-            return
-
-        left, right = st.columns([1, 2])
-        left.image(photo, width="stretch")
-        with right:
-            self._show(outcome)
-
-    def _scan_once(self, photo: UploadedFile, region_code: str) -> ScanOutcome:
-        """Scan each upload only once.
-
-        Streamlit runs this page again on every redraw while the photo is still in the
-        uploader. Without this memory, each redraw would save the same photo as a new scan.
-        Uploading a photo again counts as a new scan, because it gets a new file_id.
+        Raises:
+            InvalidImageError: if no file was chosen or it is not a usable photo.
         """
-        scans = st.session_state.setdefault("scans", {})
-        if photo.file_id not in scans:
-            scans[photo.file_id] = self.workflow.run(photo.getvalue(), region_code)
-        return self.workflow.for_region(scans[photo.file_id], region_code)
+        if photo is None or not photo.filename:
+            raise InvalidImageError("Please choose a photo first.")
+        image = photo.read()
+        return self.store.add(self.workflow.run(image, region_code), image)
 
-    def _show(self, outcome: ScanOutcome) -> None:
-        result = outcome.result
-        if not outcome.is_confident:
-            st.warning(
-                f"Not sure about this one ({result.confidence:.0%}). "
-                "Please take another photo with better light and only one item."
-            )
-            self._show_top3(outcome)
-            return
+    def render(self, region_code: str, error: str | None = None) -> str:
+        """Show the upload form, and the scan named in the address if there is one.
 
-        answer = outcome.explanation
-        st.subheader(result.material.title())
-        col1, col2 = st.columns(2)
-        col1.metric("Category", CATEGORY_LABELS.get(result.category, result.category))
-        col2.metric("Confidence", f"{result.confidence:.0%}")
-        st.success(f"Put it in the **{answer.bin}**")
-        st.write(answer.text)
-        if answer.source == "template":
-            st.caption("Offline answer, built from the local rule.")
-        if not outcome.was_saved:
-            st.caption("This scan could not be saved for the dashboard.")
-        self._show_top3(outcome)
+        Args:
+            region_code: the selected region.
+            error: a message for the user about a failed upload.
+        """
+        stored = None if error else self.store.get(request.args.get("scan"))
+        return render_template(
+            "scan.html",
+            page=self,
+            region_code=region_code,
+            error=error,
+            scan_id=request.args.get("scan") if stored else None,
+            outcome=self.workflow.for_region(stored.outcome, region_code) if stored else None,
+            photo_src=self._photo_src(stored.photo) if stored else None,
+            max_image_mb=math.ceil(ClassificationConfig.from_env().max_image_mb),
+            demo_mode=self.services.classifier.is_demo_mode,
+            category_labels=CATEGORY_LABELS,
+        )
 
     @staticmethod
-    def _show_top3(outcome: ScanOutcome) -> None:
-        with st.expander("What else could it be?"):
-            for material, probability in outcome.result.top3:
-                st.progress(probability, text=f"{material}: {probability:.0%}")
+    def _photo_src(photo: bytes) -> str:
+        """Put the photo into the page itself. The classifier already checked it is a JPEG or PNG."""
+        media_type = "image/png" if photo.startswith(b"\x89PNG") else "image/jpeg"
+        return f"data:{media_type};base64,{base64.b64encode(photo).decode('ascii')}"
 
 
 class DashboardPage(BasePage):
@@ -124,27 +100,29 @@ class DashboardPage(BasePage):
 
     title = "Municipality dashboard"
     icon = "📊"
+    endpoint = "dashboard_page"
 
-    def render(self, region_code: str) -> None:
-        st.header(self.title)
+    def render(self, region_code: str) -> str:
         analytics = self.services.analytics
         summary = analytics.summary(region_code)
         if summary.total_scans == 0:
-            st.info("No scans in this region yet. Scan a few items first.")
-            return
+            return render_template("dashboard.html", page=self, region_code=region_code, summary=summary)
 
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Total scans", summary.total_scans)
-        col2.metric("Recycling rate", f"{summary.recycling_rate} %")
-        col3.metric("Average confidence", f"{summary.average_confidence} %")
+        return render_template(
+            "dashboard.html",
+            page=self,
+            region_code=region_code,
+            summary=summary,
+            composition=self._chart_html(charts.composition_chart(analytics, region_code)),
+            trend=self._chart_html(charts.trend_chart(analytics, region_code, days=14)),
+            top_items=self._chart_html(charts.top_items_chart(analytics, region_code, limit=5)),
+            table=charts.composition_table(analytics, region_code),
+        )
 
-        left, right = st.columns(2)
-        left.plotly_chart(charts.composition_chart(analytics, region_code), width="stretch")
-        right.plotly_chart(charts.trend_chart(analytics, region_code, days=14), width="stretch")
-        st.plotly_chart(charts.top_items_chart(analytics, region_code, limit=5), width="stretch")
-
-        with st.expander("Show the numbers as a table"):
-            st.dataframe(charts.composition_table(analytics, region_code), hide_index=True)
+    @staticmethod
+    def _chart_html(figure: Figure) -> Markup:
+        """Turn a Plotly chart into HTML. The Plotly script itself is loaded once by the page."""
+        return Markup(figure.to_html(full_html=False, include_plotlyjs=False, config={"responsive": True}))
 
 
 class AboutPage(BasePage):
@@ -152,29 +130,13 @@ class AboutPage(BasePage):
 
     title = "About"
     icon = "ℹ️"
+    endpoint = "about_page"
 
-    def render(self, region_code: str) -> None:
-        st.header(self.title)
-        st.markdown(
-            """
-A resident photographs a waste item. The app recognises the material, tells you the
-right bin for your region and explains why. Every scan feeds the municipality dashboard.
-
-| Step | Subsystem |
-|---|---|
-| Photo → material and category | 1 · Classification Engine (MobileNetV2) |
-| Category + region → bin | 2 · Data & Rules (SQLite) |
-| Explanation and dashboard | 3 · AI Coach & Analytics |
-| This page and Docker | 4 · Web Interface & Deployment |
-
-**Known limits:** one item per photo works best. The model was trained mostly on photos
-with a plain background, so cluttered photos can be less accurate. When the app is not
-sure, it asks for a new photo instead of guessing.
-"""
-        )
-        status = self.services.coach.status()
-        st.caption(
-            f"Model: {'demo mode' if self.services.classifier.is_demo_mode else 'MobileNetV2'} · "
-            f"Coach: {'OpenAI' if status['language_model_available'] else 'offline templates'} · "
-            f"Cached explanations: {status['cached_explanations']}"
+    def render(self, region_code: str) -> str:
+        return render_template(
+            "about.html",
+            page=self,
+            region_code=region_code,
+            demo_mode=self.services.classifier.is_demo_mode,
+            coach_status=self.services.coach.status(),
         )

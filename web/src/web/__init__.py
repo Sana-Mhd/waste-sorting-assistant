@@ -1,6 +1,6 @@
 """Subsystem 4: Web Interface & Deployment.
 
-The Streamlit app (app.py) that connects the classification engine, the rules
+The Flask app (app.py) that connects the classification engine, the rules
 and the AI coach. The parts other code may rely on:
 
     from web import WebConfig, build_services, ScanWorkflow

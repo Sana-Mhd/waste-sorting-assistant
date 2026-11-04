@@ -1,4 +1,4 @@
-"""One scan from photo to answer, without any Streamlit code.
+"""One scan from photo to answer, without any web code.
 
 Keeping the logic here (and the display in pages.py) means it can be tested with
 plain pytest, and the page only has to show a ScanOutcome.
@@ -46,7 +46,7 @@ class ScanWorkflow:
         only counts answers the user was actually shown.
 
         Args:
-            image: the raw bytes of the upload (uploaded_file.getvalue()).
+            image: the raw bytes of the upload.
             region_code: a code from data_rules, e.g. "DO".
 
         Raises:

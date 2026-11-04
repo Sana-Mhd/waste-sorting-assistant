@@ -2,7 +2,8 @@
 # Everything the running app needs (subsystems 1-4). torch is installed separately,
 # CPU-only, see the Dockerfile and README.md.
 # Exact versions: these are the ones tested for the demo, so a new build cannot differ.
-streamlit==1.66.1
+Flask==3.1.3
+waitress==3.0.2
 python-dotenv==1.2.4
 # subsystem 1
 Pillow==13.0.0

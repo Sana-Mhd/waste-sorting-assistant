@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }} · {{ app_title }}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♻️</text></svg>">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <aside class="sidebar">
+    <form method="get" action="{{ url_for(page.endpoint) }}">
+      <label for="region">Your region</label>
+      <select id="region" name="region" onchange="this.form.submit()">
+        {% for code, name in regions %}
+        <option value="{{ code }}" {{ "selected" if code == region_code }}>{{ name }} ({{ code }})</option>
+        {% endfor %}
+      </select>
+      {% if scan_id %}<input type="hidden" name="scan" value="{{ scan_id }}">{% endif %}
+      <noscript><button type="submit">Change region</button></noscript>
+    </form>
+
+    <nav aria-label="Pages">
+      <p class="nav-title">Page</p>
+      {% for item in pages %}
+      <a href="{{ url_for(item.endpoint, region=region_code) }}" {% if item is sameas page %}class="active" aria-current="page"{% endif %}>{{ item.label }}</a>
+      {% endfor %}
+    </nav>
+  </aside>
+
+  <main>
+    <h1>♻️ {{ app_title }}</h1>
+    <h2>{{ page.title }}</h2>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
