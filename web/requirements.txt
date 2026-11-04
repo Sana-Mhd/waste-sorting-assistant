@@ -1,0 +1,15 @@
+# Subsystem 4: Web Interface & Deployment
+# Everything the running app needs (subsystems 1-4). torch is installed separately,
+# CPU-only, see the Dockerfile and README.md.
+streamlit>=1.66
+# subsystem 1
+Pillow>=10.0
+numpy>=1.26
+# subsystem 2
+SQLAlchemy>=2.0
+# subsystem 3
+openai>=1.40
+pandas>=2.2
+plotly>=5.22
+# tests
+pytest>=8.0

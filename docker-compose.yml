@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    image: waste-sorting-assistant
+    ports:
+      - "8501:8501"
+    env_file:
+      - path: .env          # OPENAI_API_KEY; optional, the coach works offline without it
+        required: false
+    environment:
+      DATABASE_URL: sqlite:////data/waste.db
+      COACH_CACHE_PATH: /data/coach_cache.db
+      DEFAULT_REGION: DO
+    volumes:
+      - waste-data:/data
+    restart: unless-stopped
+
+volumes:
+  waste-data:
