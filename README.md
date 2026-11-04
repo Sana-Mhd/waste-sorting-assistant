@@ -15,12 +15,12 @@ If the model is not confident, the app asks for a new photo instead of guessing.
 
 ## Team
 
-| # | Subsystem | Folder | Owner | Details |
-|---|---|---|---|---|
-| 1 | Classification Engine (computer vision) | `classification/` | Romina Hajizadeh | [README](classification/README.md) |
-| 2 | Data & Rules (SQLite, SQLAlchemy) | `data_rules/` | Fatemeh Hemmati | [README](data_rules/README.md) |
-| 3 | AI Coach & Analytics (OpenAI, Plotly dashboard) | `coach/` | Sana Mohammadi | [README](coach/README.md) |
-| 4 | Web Interface & Deployment (Flask, Docker) | `web/` | Amirreza Seighali | [README](web/README.md) |
+| # | Subsystem | Folder | Owner | Identification | Details |
+|---|---|---|---|---|---|
+| 1 | Classification Engine (computer vision) | `classification/` | Romina Hajizadeh | 7224285 MDT | [README](classification/README.md) |
+| 2 | Data & Rules (SQLite, SQLAlchemy) | `data_rules/` | Fatemeh Hemmati | 7224097 MDT | [README](data_rules/README.md) |
+| 3 | AI Coach & Analytics (OpenAI, Plotly dashboard) | `coach/` | Sana Mohammadi | 7224512 MDT | [README](coach/README.md) |
+| 4 | Web Interface & Deployment (Flask, Docker) | `web/` | Amirreza Seighali | 7224661 MDT | [README](web/README.md) |
 
 ## Run the app
 
