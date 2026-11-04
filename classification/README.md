@@ -126,6 +126,8 @@ engine = ClassificationEngine(DummyClassifier("organic", 0.8), ImagePreprocessor
 The engine only knows the `BaseClassifier` interface, so the real model and the dummy can be swapped
 without touching the rest of the code.
 
+Class diagram: **[docs/class_diagram.png](docs/class_diagram.png)**
+
 ## Training
 
 The training scripts are in `training/` next to `src/` (not part of the app). Run all commands below from this folder.
