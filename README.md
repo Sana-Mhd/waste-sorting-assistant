@@ -124,6 +124,15 @@ Database design: [entity relationship diagram](data_rules/docs/erd.png).
 
 ![Class diagram of subsystem 4](web/docs/class_diagram.png)
 
+## Hometask 2: Real-Time Data Processing
+
+A stream processing framework for a conveyor belt optical sorter, in `stream_processing/`.
+Details and how to run it: [stream_processing/README.md](stream_processing/README.md).
+
+**Video presentation (5 min):** *link to be added*
+
+![Class diagram of Hometask 2](stream_processing/docs/class_diagram.png)
+
 ## Results of the model
 
 Accuracy on 484 test photos the model never saw in training: **0.897**.

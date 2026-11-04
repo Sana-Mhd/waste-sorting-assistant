@@ -1,4 +1,4 @@
-"""Run the test suites of all four subsystems with one command.
+"""Run the test suites of all four subsystems and of Hometask 2 with one command.
 
 Each subsystem has its own conftest.py, so each suite runs from its own folder.
 
@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-SUBSYSTEMS = ("classification", "data_rules", "coach", "web")
+SUBSYSTEMS = ("classification", "data_rules", "coach", "web", "stream_processing")
 
 
 def run_suite(subsystem: str) -> tuple[bool, str]:
