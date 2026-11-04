@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 
 import pytest
-import streamlit as st
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -13,8 +12,6 @@ for package_dir in ("classification", "data_rules", "coach", "web"):
 from classification import ClassificationEngine, DummyClassifier, ImagePreprocessor  # noqa: E402
 from coach import CoachConfig  # noqa: E402
 from web import WebConfig, build_services  # noqa: E402
-
-APP_FILE = ROOT / "web" / "src" / "web" / "app.py"
 
 
 def png_bytes() -> bytes:
@@ -43,6 +40,4 @@ def app_env(tmp_path, monkeypatch):
     monkeypatch.setenv("DATABASE_URL", f"sqlite:///{tmp_path / 'app.db'}")
     monkeypatch.setenv("COACH_CACHE_PATH", str(tmp_path / "coach_cache.db"))
     monkeypatch.setenv("OPENAI_API_KEY", "")
-    st.cache_resource.clear()      # every test gets fresh services on its own database
-    yield tmp_path
-    st.cache_resource.clear()
+    return tmp_path

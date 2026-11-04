@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% macro top3(result) %}
+<details>
+  <summary>What else could it be?</summary>
+  {% for material, probability in result.top3 %}
+  <div class="bar-row">
+    <span>{{ material }}: {{ probability|percent }}</span>
+    <div class="bar"><div style="width: {{ probability|percent }}"></div></div>
+  </div>
+  {% endfor %}
+</details>
+{% endmacro %}
+
+{% block content %}
+{% if demo_mode %}
+<p class="notice info">Demo mode: no trained model was found, so every photo gets the same answer.</p>
+{% endif %}
+
+<form class="upload" method="post" action="{{ url_for('upload_photo', region=region_code) }}" enctype="multipart/form-data"
+      onsubmit="const b = this.querySelector('button'); b.disabled = true; b.textContent = 'Looking at your photo...';">
+  <label for="photo">Photo of one waste item</label>
+  <input id="photo" type="file" name="photo" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+  <p class="caption">JPEG or PNG, up to {{ max_image_mb }} MB.</p>
+  <button type="submit">Scan this photo</button>
+</form>
+
+{% if error %}
+<p class="notice error">{{ error }}</p>
+{% elif not outcome %}
+<p class="caption">Take a photo of a single item on a calm background and upload it.</p>
+{% else %}
+<section class="result">
+  <img class="photo" src="{{ photo_src }}" alt="Your uploaded photo">
+  <div>
+    {% set result = outcome.result %}
+    {% if not outcome.is_confident %}
+    <p class="notice warning">
+      Not sure about this one ({{ result.confidence|percent }}).
+      Please take another photo with better light and only one item.
+    </p>
+    {% else %}
+    {% set answer = outcome.explanation %}
+    <h3>{{ result.material|title }}</h3>
+    <div class="metrics">
+      <div class="metric"><span>Category</span><strong>{{ category_labels.get(result.category, result.category) }}</strong></div>
+      <div class="metric"><span>Confidence</span><strong>{{ result.confidence|percent }}</strong></div>
+    </div>
+    <p class="notice success">Put it in the <strong>{{ answer.bin }}</strong></p>
+    <p>{{ answer.text }}</p>
+    {% if answer.source == "template" %}<p class="caption">Offline answer, built from the local rule.</p>{% endif %}
+    {% if not outcome.was_saved %}<p class="caption">This scan could not be saved for the dashboard.</p>{% endif %}
+    {% endif %}
+    {{ top3(result) }}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

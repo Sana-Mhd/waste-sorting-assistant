@@ -24,7 +24,8 @@ COPY web/src               web/src
 ENV PYTHONPATH=/app/classification/src:/app/data_rules/src:/app/coach/src:/app/web/src \
     DATABASE_URL=sqlite:////data/waste.db \
     COACH_CACHE_PATH=/data/coach_cache.db \
-    DEFAULT_REGION=DO
+    DEFAULT_REGION=DO \
+    HOST=0.0.0.0
 
 # Scans and cached explanations live here; mount it as a volume so they survive a restart.
 RUN useradd --create-home appuser && mkdir /data && chown appuser /data
@@ -33,6 +34,6 @@ VOLUME ["/data"]
 
 EXPOSE 8501
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')"
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/health')"
 
-CMD ["streamlit", "run", "web/src/web/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
+CMD ["python", "web/src/web/app.py"]

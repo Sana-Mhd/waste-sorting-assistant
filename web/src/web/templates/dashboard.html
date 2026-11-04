@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% if summary.total_scans %}<script src="{{ url_for('plotly_js') }}"></script>{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if not summary.total_scans %}
+<p class="notice info">No scans in this region yet. Scan a few items first.</p>
+{% else %}
+<div class="metrics three">
+  <div class="metric"><span>Total scans</span><strong>{{ summary.total_scans }}</strong></div>
+  <div class="metric"><span>Recycling rate</span><strong>{{ summary.recycling_rate }} %</strong></div>
+  <div class="metric"><span>Average confidence</span><strong>{{ summary.average_confidence }} %</strong></div>
+</div>
+
+<div class="charts">
+  <div class="chart">{{ composition }}</div>
+  <div class="chart">{{ trend }}</div>
+  <div class="chart wide">{{ top_items }}</div>
+</div>
+
+<details>
+  <summary>Show the numbers as a table</summary>
+  <table>
+    <thead>
+      <tr>{% for column in table.columns %}<th scope="col">{{ column }}</th>{% endfor %}</tr>
+    </thead>
+    <tbody>
+      {% for row in table.itertuples(index=False) %}
+      <tr>{% for value in row %}<td>{{ value }}</td>{% endfor %}</tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</details>
+{% endif %}
+{% endblock %}
