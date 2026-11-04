@@ -46,34 +46,31 @@ result = engine.classify("photo.jpg")           # file path (str/Path) or raw by
 #                         is_confident=True, top3=[("plastic", 0.93), ("metal", 0.04), ("glass", 0.01)])
 ```
 
-Streamlit page (Subsystem 4), connecting this package to Data & Rules:
+Flask route (Subsystem 4), connecting this package to Data & Rules:
 
 ```python
-import streamlit as st
+from flask import Flask, request
 from classification import ClassificationEngine
 from data_rules import create_services
 
-@st.cache_resource
-def load():
-    dal, rules = create_services()
-    return ClassificationEngine.from_config(), dal, rules
+app = Flask(__name__)
+clf = ClassificationEngine.from_config()        # built once, when the app starts
+dal, rules = create_services()
 
-clf, dal, rules = load()
-uploaded = st.file_uploader("Photo", type=["jpg", "jpeg", "png"])
-if uploaded:
-    result = clf.classify(uploaded.getvalue())
+@app.post("/scan")
+def scan():
+    result = clf.classify(request.files["photo"].read())
     if not result.is_confident:
-        st.warning("Not sure - please retake the photo.")
-    else:
-        rule = rules.get_rule(result.category, "DO")
-        dal.save_result(result.material, result.category, result.confidence, "DO")
-        st.success(f"{result.material} -> {rule.bin}")
+        return "Not sure - please retake the photo."
+    rule = rules.get_rule(result.category, "DO")
+    dal.save_result(result.material, result.category, result.confidence, "DO")
+    return f"{result.material} -> {rule.bin}"
 ```
 
 Two additions the UI should handle:
 
 - `clf.classify(...)` raises `InvalidImageError` for broken, too large or non-JPEG/PNG files.
-  The message is written for users: `except InvalidImageError as e: st.error(str(e))`.
+  The message is written for users: `except InvalidImageError as e: return str(e), 400`.
 - `clf.is_demo_mode` is `True` when no trained weights were found. The engine then uses a
   `DummyClassifier` that always answers "plastic, 0.9". Show a banner so nobody mistakes it for a real result.
 

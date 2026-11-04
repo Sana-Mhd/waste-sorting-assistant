@@ -28,7 +28,7 @@ class CoachConfig:
     """Everything the coach needs to know at start-up.
 
     The API key is held here but never printed: `__repr__` masks it, so the key
-    cannot leak into a log line, a traceback or a Streamlit error page.
+    cannot leak into a log line, a traceback or a web error page.
     """
 
     api_key: str = ""

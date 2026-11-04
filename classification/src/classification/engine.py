@@ -70,7 +70,7 @@ class ClassificationEngine:
         """Classify one photo.
 
         Args:
-            image: file path (str or Path) or raw bytes, e.g. from a Streamlit upload.
+            image: file path (str or Path) or raw bytes, e.g. from a web upload.
 
         Raises:
             InvalidImageError: if the photo cannot be read or is not allowed.

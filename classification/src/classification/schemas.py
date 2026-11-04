@@ -6,7 +6,7 @@ torch tensor, so nobody outside this package needs to know how the model works.
 from dataclasses import dataclass
 from pathlib import Path
 
-# What classify() accepts: a file path, or the raw bytes of a Streamlit upload.
+# What classify() accepts: a file path, or the raw bytes of a web upload.
 ImageInput = str | Path | bytes
 
 

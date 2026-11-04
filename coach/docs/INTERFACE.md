@@ -98,46 +98,64 @@ class Summary:
 - Percentages are rounded to one decimal, so a composition can add up to 99.9.
 - Passing `region_code=None` to the analytics means "every region".
 
-## 5. What subsystem 4 writes in Streamlit
+## 5. What subsystem 4 writes in Flask
+
+The services are built once, when the app starts:
 
 ```python
-import streamlit as st
+from flask import render_template
 from data_rules import create_services
 from coach import create_coach_services, charts
 
-@st.cache_resource
-def services():
-    dal, rule_engine = create_services()
-    coach, analytics = create_coach_services(dal, rule_engine)
-    return dal, rule_engine, coach, analytics
+dal, rule_engine = create_services()
+coach, analytics = create_coach_services(dal, rule_engine)
+```
 
-dal, rule_engine, coach, analytics = services()
+The result page:
 
-# --- result page -------------------------------------------------------------
+```python
 result = engine.classify(uploaded_photo)        # subsystem 1
 answer = coach.explain_result(result, region_code)
-
-st.success(f"Put it in the **{answer.bin}**")
-st.write(answer.text)
-if answer.source == "template":
-    st.caption("Offline answer, built from the local rule.")
-
 dal.save_result(result.material, result.category, result.confidence, region_code)
 
-# --- dashboard page ----------------------------------------------------------
-summary = analytics.summary(region_code)
-col1, col2, col3 = st.columns(3)
-col1.metric("Total scans", summary.total_scans)
-col2.metric("Recycling rate", f"{summary.recycling_rate} %")
-col3.metric("Average confidence", f"{summary.average_confidence} %")
-
-st.plotly_chart(charts.composition_chart(analytics, region_code), use_container_width=True)
-st.plotly_chart(charts.trend_chart(analytics, region_code, days=14), use_container_width=True)
-st.plotly_chart(charts.top_items_chart(analytics, region_code), use_container_width=True)
-
-with st.expander("Show the numbers as a table"):
-    st.dataframe(charts.composition_table(analytics, region_code), hide_index=True)
+return render_template("scan.html", answer=answer)
 ```
+
+```html
+<p>Put it in the <strong>{{ answer.bin }}</strong></p>
+<p>{{ answer.text }}</p>
+{% if answer.source == "template" %}
+  <p>Offline answer, built from the local rule.</p>
+{% endif %}
+```
+
+The dashboard page. Each chart becomes a piece of HTML, and the page loads the Plotly script once:
+
+```python
+def chart_html(figure) -> Markup:
+    return Markup(figure.to_html(full_html=False, include_plotlyjs=False))
+
+return render_template(
+    "dashboard.html",
+    summary=analytics.summary(region_code),
+    composition=chart_html(charts.composition_chart(analytics, region_code)),
+    trend=chart_html(charts.trend_chart(analytics, region_code, days=14)),
+    top_items=chart_html(charts.top_items_chart(analytics, region_code)),
+    table=charts.composition_table(analytics, region_code),
+)
+```
+
+```html
+<p>Total scans: {{ summary.total_scans }}</p>
+<p>Recycling rate: {{ summary.recycling_rate }} %</p>
+<p>Average confidence: {{ summary.average_confidence }} %</p>
+
+{{ composition }}
+{{ trend }}
+{{ top_items }}
+```
+
+`table` is a pandas DataFrame with the same numbers, for a table under the charts.
 
 ## 6. What the user sees
 

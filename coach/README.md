@@ -58,7 +58,7 @@ charts.trend_chart(analytics, "DO", days=14)
 charts.top_items_chart(analytics, "DO", limit=5)
 ```
 
-The complete interface, the exact Streamlit code and a sketch of what the user
+The complete interface, the Flask code and a sketch of what the user
 sees are in **[docs/INTERFACE.md](docs/INTERFACE.md)**.
 
 ## Contract
