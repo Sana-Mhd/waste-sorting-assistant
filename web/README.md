@@ -32,13 +32,14 @@ From the repository root:
 ```bash
 python -m venv .venv
 source .venv/bin/activate              # Windows: .venv\Scripts\activate
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install torch==2.15.0 torchvision==0.29.2 --index-url https://download.pytorch.org/whl/cpu
 pip install -r web/requirements.txt
 streamlit run web/src/web/app.py
 ```
 
 `app.py` puts the four `src/` folders on the Python path itself, so no `PYTHONPATH` is needed.
 Locally the database is `data/waste.db` in the folder you start from.
+`app.py` also reads a `.env` file from the repository root, so a key in there works here too.
 
 ## Configuration
 
@@ -64,6 +65,9 @@ Locally the database is `data/waste.db` in the folder you start from.
 
 ## Design
 
+Class diagram: **[docs/class_diagram.png](docs/class_diagram.png)**
+(redraw it with `python docs/make_class_diagram.py`, which needs matplotlib).
+
 | File | Content |
 |---|---|
 | `app.py` | Streamlit entry point: page setup, sidebar, chooses a page. No logic. |
@@ -88,11 +92,11 @@ cd web
 python -m pytest -v
 ```
 
-28 tests, no network, no OpenAI key, no files left behind:
+31 tests, no network, no OpenAI key, no files left behind:
 
 | File | Covers |
 |---|---|
-| `test_services.py` | all services start on a temporary database, bad `DATABASE_URL`, settings, region names |
+| `test_services.py` | all services start on a temporary database, bad `DATABASE_URL`, settings, the `.env` file, region names |
 | `test_workflow.py` | confident scan is explained and saved, uncertain scan is not, every category, invalid upload, unknown region, scans reach the dashboard |
 | `test_app.py` | the real `app.py` with Streamlit's `AppTest`: starts, sidebar, empty dashboard, about page, a photo is saved once per upload, the upload limit |
 

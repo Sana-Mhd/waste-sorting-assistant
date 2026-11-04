@@ -1,9 +1,26 @@
 """Settings of the web interface, read from the environment."""
 import os
 from dataclasses import dataclass
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 DEFAULT_REGION = "DO"
 APP_TITLE = "Waste Sorting & Recycling Assistant"
+
+
+def load_env_file(path: Path) -> bool:
+    """Read settings such as OPENAI_API_KEY from a .env file, for running without Docker.
+
+    Docker passes these settings itself, and a value already set is never replaced.
+
+    Args:
+        path: where the .env file should be. A missing file is fine.
+
+    Returns:
+        True if the file was found and read.
+    """
+    return load_dotenv(path, override=False)
 
 
 @dataclass(frozen=True)

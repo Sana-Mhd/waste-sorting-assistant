@@ -18,12 +18,13 @@ for package_dir in ("classification", "data_rules", "coach", "web"):
 
 import streamlit as st  # noqa: E402
 
-from web.config import WebConfig, resolve_region  # noqa: E402
+from web.config import WebConfig, load_env_file, resolve_region  # noqa: E402
 from web.exceptions import ServiceStartupError  # noqa: E402
 from web.pages import AboutPage, BasePage, DashboardPage, ScanPage  # noqa: E402
 from web.services import AppServices, build_services  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+load_env_file(ROOT / ".env")
 
 
 @st.cache_resource(show_spinner="Starting the assistant...")

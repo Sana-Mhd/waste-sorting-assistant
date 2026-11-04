@@ -73,7 +73,7 @@ class ScanPage(BasePage):
             return
 
         left, right = st.columns([1, 2])
-        left.image(photo, use_container_width=True)
+        left.image(photo, width="stretch")
         with right:
             self._show(outcome)
 
@@ -139,9 +139,9 @@ class DashboardPage(BasePage):
         col3.metric("Average confidence", f"{summary.average_confidence} %")
 
         left, right = st.columns(2)
-        left.plotly_chart(charts.composition_chart(analytics, region_code), use_container_width=True)
-        right.plotly_chart(charts.trend_chart(analytics, region_code, days=14), use_container_width=True)
-        st.plotly_chart(charts.top_items_chart(analytics, region_code, limit=5), use_container_width=True)
+        left.plotly_chart(charts.composition_chart(analytics, region_code), width="stretch")
+        right.plotly_chart(charts.trend_chart(analytics, region_code, days=14), width="stretch")
+        st.plotly_chart(charts.top_items_chart(analytics, region_code, limit=5), width="stretch")
 
         with st.expander("Show the numbers as a table"):
             st.dataframe(charts.composition_table(analytics, region_code), hide_index=True)
