@@ -7,7 +7,7 @@ and the data access layer used by the other three subsystems.
 
 ```bash
 pip install -r requirements.txt
-python -m pytest            # 35 tests, in-memory database
+python -m pytest            # 52 tests, in-memory database
 ```
 
 The database path comes from the `DATABASE_URL` environment variable
@@ -47,8 +47,20 @@ records = dal.get_results(region_code="DO", since=some_datetime)   # list[Classi
 - `region` is a short code. The only seeded region is `"DO"` (Dortmund). Case does not matter.
 - `confidence` is a float from 0 to 1.
 - Unknown region or missing rule: `get_rule` returns a generic answer and logs a warning, it does not crash.
-- Unknown category: `ValueError`.
+- Unknown category: `InvalidDataError`, which is also a `ValueError`.
 - Nobody outside this package imports `models.py` or talks to SQLite directly.
+
+## Errors
+
+Every error of this subsystem comes from `exceptions.py` and can be caught as `DataRulesError`.
+
+| Error | When |
+|---|---|
+| `InvalidDataError` (also a `ValueError`) | a value is not allowed, e.g. an unknown category or a confidence above 1 |
+| `UnknownRegionError` (an `InvalidDataError`) | saving for a region that is not in the database |
+| `RuleFileError` (also a `ValueError`) | a rule file is not valid JSON or has the wrong content |
+| `NoRuleFilesError` (a `RuleFileError`, also a `FileNotFoundError`) | the rules folder is empty |
+| `DatabaseError` | the database failed; the message is written for users |
 
 ## Tables
 

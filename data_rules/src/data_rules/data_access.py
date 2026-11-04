@@ -2,12 +2,16 @@
 
 Subsystems 1, 3 and 4 call these methods and get plain dataclasses back.
 """
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import datetime, timezone
 
 from sqlalchemy import select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session, sessionmaker
 
 from .config import CATEGORIES
+from .exceptions import DatabaseError, InvalidDataError, UnknownRegionError
 from .models import ClassificationResultRow, Item, Region, RuleRow, User
 from .schemas import ClassificationRecord, Rule
 
@@ -20,12 +24,21 @@ def _to_naive_utc(dt: datetime | None) -> datetime | None:
 
 def _check_category(category: str) -> None:
     if category not in CATEGORIES:
-        raise ValueError(f"category must be one of {CATEGORIES}, got {category!r}")
+        raise InvalidDataError(f"category must be one of {CATEGORIES}, got {category!r}")
 
 
 class DataAccessLayer:
     def __init__(self, session_factory: sessionmaker):
         self._sf = session_factory
+
+    @contextmanager
+    def _session(self) -> Iterator[Session]:
+        """Open a session and turn any database failure into a DatabaseError."""
+        try:
+            with self._sf() as session:
+                yield session
+        except SQLAlchemyError as exc:
+            raise DatabaseError("The database is not available right now.") from exc
 
     # ---- regions and rules (configuration) ---------------------------------
 
@@ -33,8 +46,8 @@ class DataAccessLayer:
         """Create the region, or update its name if it already exists."""
         code = code.strip().upper()
         if not code or not name.strip():
-            raise ValueError("region code and name must not be empty")
-        with self._sf() as s:
+            raise InvalidDataError("region code and name must not be empty")
+        with self._session() as s:
             region = s.get(Region, code)
             if region is None:
                 s.add(Region(code=code, name=name.strip()))
@@ -43,21 +56,21 @@ class DataAccessLayer:
             s.commit()
 
     def list_regions(self) -> list[tuple[str, str]]:
-        with self._sf() as s:
+        with self._session() as s:
             rows = s.scalars(select(Region).order_by(Region.name)).all()
             return [(r.code, r.name) for r in rows]
 
     def region_exists(self, code: str) -> bool:
-        with self._sf() as s:
+        with self._session() as s:
             return s.get(Region, code.strip().upper()) is not None
 
     def set_rule(self, region_code: str, category: str, bin: str, reason: str) -> None:
         """Insert or update the rule for (region, category). Safe to call twice."""
         _check_category(category)
         region_code = region_code.strip().upper()
-        with self._sf() as s:
+        with self._session() as s:
             if s.get(Region, region_code) is None:
-                raise ValueError(f"unknown region {region_code!r}, call add_region first")
+                raise UnknownRegionError(f"unknown region {region_code!r}, call add_region first")
             row = s.scalar(
                 select(RuleRow).where(
                     RuleRow.region_code == region_code, RuleRow.category == category
@@ -72,7 +85,7 @@ class DataAccessLayer:
     def get_rule(self, category: str, region_code: str) -> Rule | None:
         """Exact lookup. Returns None if there is no rule for this pair."""
         _check_category(category)
-        with self._sf() as s:
+        with self._session() as s:
             row = s.scalar(
                 select(RuleRow).where(
                     RuleRow.region_code == region_code.strip().upper(),
@@ -82,7 +95,7 @@ class DataAccessLayer:
             return self._rule(row) if row else None
 
     def get_rules(self, region_code: str) -> list[Rule]:
-        with self._sf() as s:
+        with self._session() as s:
             rows = s.scalars(
                 select(RuleRow)
                 .where(RuleRow.region_code == region_code.strip().upper())
@@ -95,8 +108,8 @@ class DataAccessLayer:
     def get_or_create_user(self, username: str) -> int:
         username = username.strip()
         if not username:
-            raise ValueError("username must not be empty")
-        with self._sf() as s:
+            raise InvalidDataError("username must not be empty")
+        with self._session() as s:
             user = s.scalar(select(User).where(User.username == username))
             if user is None:
                 user = User(username=username)
@@ -116,13 +129,13 @@ class DataAccessLayer:
         _check_category(category)
         item = item.strip().lower()
         if not item:
-            raise ValueError("item must not be empty")
+            raise InvalidDataError("item must not be empty")
         if not 0.0 <= confidence <= 1.0:
-            raise ValueError("confidence must be between 0 and 1")
+            raise InvalidDataError("confidence must be between 0 and 1")
         region_code = region_code.strip().upper()
-        with self._sf() as s:
+        with self._session() as s:
             if s.get(Region, region_code) is None:
-                raise ValueError(f"unknown region {region_code!r}")
+                raise UnknownRegionError(f"unknown region {region_code!r}")
             item_row = s.scalar(select(Item).where(Item.name == item))
             if item_row is None:
                 item_row = Item(name=item)
@@ -159,7 +172,7 @@ class DataAccessLayer:
             stmt = stmt.where(ClassificationResultRow.created_at >= since)
         if until:
             stmt = stmt.where(ClassificationResultRow.created_at <= until)
-        with self._sf() as s:
+        with self._session() as s:
             return [
                 ClassificationRecord(
                     id=r.id,

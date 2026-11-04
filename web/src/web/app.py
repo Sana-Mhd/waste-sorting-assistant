@@ -25,6 +25,8 @@ from waitress import serve  # noqa: E402
 from werkzeug.exceptions import RequestEntityTooLarge  # noqa: E402
 
 from classification import ClassificationConfig, InvalidImageError  # noqa: E402
+from data_rules import DatabaseError  # noqa: E402
+from web.api import create_api  # noqa: E402
 from web.config import WebConfig, load_env_file, resolve_region  # noqa: E402
 from web.exceptions import ServiceStartupError  # noqa: E402
 from web.pages import AboutPage, BasePage, DashboardPage, ScanPage  # noqa: E402
@@ -80,6 +82,7 @@ def _add_routes(app: Flask, services: AppServices, config: WebConfig, max_image_
     dashboard_page = DashboardPage(services)
     about_page = AboutPage(services)
     pages: list[BasePage] = [scan_page, dashboard_page, about_page]
+    app.register_blueprint(create_api(services, config))
 
     def selected_region() -> str:
         """The region in the address, or the default one. Unknown values fall back to a known region."""
@@ -89,7 +92,10 @@ def _add_routes(app: Flask, services: AppServices, config: WebConfig, max_image_
     @app.context_processor
     def shared_page_data() -> dict:
         """What the layout around every page needs."""
-        regions = services.regions() or [(config.default_region, config.default_region)]
+        try:
+            regions = services.regions() or [(config.default_region, config.default_region)]
+        except DatabaseError:       # this also runs for the page that reports a failing database
+            regions = []
         return {"app_title": config.title, "pages": pages, "regions": regions}
 
     @app.get("/", endpoint=scan_page.endpoint)
@@ -126,6 +132,10 @@ def _add_routes(app: Flask, services: AppServices, config: WebConfig, max_image_
     def upload_too_large(_error: RequestEntityTooLarge) -> tuple[str, int]:
         message = f"The image is too large. The maximum size is {max_image_mb:g} MB."
         return scan_page.render(selected_region(), error=message), 413
+
+    @app.errorhandler(DatabaseError)
+    def database_failed(error: DatabaseError) -> tuple[str, int]:
+        return render_template("startup_error.html", app_title=config.title, message=str(error)), 503
 
 
 def main() -> None:

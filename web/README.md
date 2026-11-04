@@ -71,6 +71,7 @@ Class diagram: **[docs/class_diagram.png](docs/class_diagram.png)**
 | File | Content |
 |---|---|
 | `app.py` | Flask entry point: `create_app()` connects the addresses to the pages, `main()` starts the server. No logic. |
+| `api.py` | `create_api()`: the JSON routes under `/api` |
 | `services.py` | `AppServices` (composition of the five services of subsystems 1–3) and `build_services()` |
 | `workflow.py` | `ScanWorkflow.run(image, region) -> ScanOutcome`: classify → explain → save. No web code inside. |
 | `scan_store.py` | `ScanStore`: the latest scans in memory, so a result page can be reloaded without a new scan |
@@ -87,13 +88,32 @@ Class diagram: **[docs/class_diagram.png](docs/class_diagram.png)**
 | `GET /plotly.min.js` | Plotly's script from the installed package, so the charts work without internet |
 | `GET /health` | status of the app, used by the Docker health check |
 
+### JSON API
+
+The same data for other programs. All of it comes through the services of subsystems 2 and 3.
+Without `?region=` the default region is used.
+
+| Address | Returns |
+|---|---|
+| `GET /api/regions` | the known regions: `code`, `name` |
+| `GET /api/rules?region=DO` | one rule per category: `category`, `region_code`, `bin`, `reason` |
+| `GET /api/results?region=DO` | every stored scan, oldest first: `id`, `item`, `category`, `confidence`, `region_code`, `created_at` (UTC) |
+| `GET /api/summary?region=DO` | `region_code`, `total_scans`, `recycling_rate`, `composition`, `average_confidence` |
+
+An unknown region gets a 404 and a database failure a 503, both as `{"error": "..."}`.
+
+```bash
+curl http://localhost:8501/api/summary?region=DO
+```
+
 - **Composition:** `AppServices` holds the services; `ScanPage` holds a `ScanWorkflow` and a `ScanStore`.
 - **Inheritance and abstract class:** every page implements `BasePage.render(region_code)`.
 - **Separation:** the logic (`workflow.py`) is plain Python and tested with pytest;
   the pages only display a `ScanOutcome`.
 - **Errors:** `InvalidImageError` (subsystem 1) is shown as a friendly message;
   a failing start raises `ServiceStartupError` and every page shows its readable message;
-  a failing save is logged and the user still gets the answer.
+  a failing save is logged and the user still gets the answer;
+  a `DatabaseError` (subsystem 2) gives a readable page, or a JSON error from the API.
 
 ## Tests
 
@@ -102,12 +122,13 @@ cd web
 python -m pytest -v
 ```
 
-52 tests, no network, no OpenAI key, no files left behind:
+66 tests, no network, no OpenAI key, no files left behind:
 
 | File | Covers |
 |---|---|
 | `test_services.py` | all services start on a temporary database, bad `DATABASE_URL`, settings, the `.env` file, region names |
 | `test_workflow.py` | confident scan is explained and saved, uncertain scan is not, every category, invalid upload, unknown region, scans reach the dashboard |
+| `test_api.py` | every JSON route, the default region, unknown regions, uncertain scans, a failing database |
 | `test_scan_store.py` | stored scans can be read again, unknown ids, the oldest scan is dropped |
 | `test_app.py` | the real `app.py` with Flask's test client: all pages, sidebar, a photo is saved once per upload, uncertain and broken uploads, the upload limits, the dashboard charts, a failed start |
 

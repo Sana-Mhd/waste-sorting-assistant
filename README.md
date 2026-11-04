@@ -55,6 +55,12 @@ Copy `.env.example` to `.env` and put your OpenAI key in it. Both ways of runnin
 read this file. Without a key the app still works and answers from offline templates.
 `.env` is never committed.
 
+### JSON API
+
+While the app runs, the stored data is also available as JSON: `/api/regions`, `/api/rules`,
+`/api/results` and `/api/summary`, for example http://localhost:8501/api/summary?region=DO.
+See the [web README](web/README.md#json-api).
+
 ## Tests
 
 ```bash

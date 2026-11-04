@@ -11,6 +11,14 @@ Public API for the other subsystems:
 from .config import CATEGORIES, DEFAULT_DATABASE_URL
 from .data_access import DataAccessLayer
 from .database import create_services, init_db, make_session_factory
+from .exceptions import (
+    DatabaseError,
+    DataRulesError,
+    InvalidDataError,
+    NoRuleFilesError,
+    RuleFileError,
+    UnknownRegionError,
+)
 from .rule_engine import RuleEngine
 from .schemas import ClassificationRecord, Rule
 
@@ -19,8 +27,14 @@ __all__ = [
     "DEFAULT_DATABASE_URL",
     "ClassificationRecord",
     "DataAccessLayer",
+    "DataRulesError",
+    "DatabaseError",
+    "InvalidDataError",
+    "NoRuleFilesError",
     "Rule",
     "RuleEngine",
+    "RuleFileError",
+    "UnknownRegionError",
     "create_services",
     "init_db",
     "make_session_factory",
