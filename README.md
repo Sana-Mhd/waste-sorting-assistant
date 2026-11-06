@@ -36,7 +36,7 @@ written as Python properties.
 
 ## Presentation Link
 
-Team video: *link to be added*
+Team video: https://youtu.be/lTINQj-ZxsA
 
 ## Run the app
 
