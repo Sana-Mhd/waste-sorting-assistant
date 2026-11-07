@@ -3,7 +3,7 @@
 An event-driven stream processing framework for an automated conveyor belt optical sorter.
 It only needs Python itself, and it is separate from the capstone app.
 
-**Video presentation (5 min):** *link to be added*
+**Video presentation (5 min):** https://youtu.be/KtGtp3LHUkw
 
 The sorter sends one message per detected item. The pipeline:
 

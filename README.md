@@ -129,7 +129,7 @@ Database design: [entity relationship diagram](data_rules/docs/erd.png).
 A stream processing framework for a conveyor belt optical sorter, in `stream_processing/`.
 Details and how to run it: [stream_processing/README.md](stream_processing/README.md).
 
-**Video presentation (5 min):** *link to be added*
+**Video presentation (5 min):** https://youtu.be/KtGtp3LHUkw
 
 ![Class diagram of Hometask 2](stream_processing/docs/class_diagram.png)
 
