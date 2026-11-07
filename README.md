@@ -72,6 +72,8 @@ To run one suite, go to its folder and run `python -m pytest`.
 
 ## Hometask 4: Exception Handling and Unit tests
 
+**Video presentation:** https://youtu.be/TBVTzSooRZk
+
 ### Error-handling classes
 
 | Subsystem | Classes | File |
