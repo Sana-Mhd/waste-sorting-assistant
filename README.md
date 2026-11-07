@@ -70,6 +70,27 @@ python run_tests.py
 This runs the suites of all four subsystems, without network, API key or database file.
 To run one suite, go to its folder and run `python -m pytest`.
 
+## Hometask 4: Exception Handling and Unit tests
+
+### Error-handling classes
+
+| Subsystem | Classes | File |
+|---|---|---|
+| 1 Classification | `InvalidImageError`, `ModelNotFoundError` | [exceptions.py](classification/src/classification/exceptions.py) |
+| 2 Data & Rules | `DataRulesError` | [exceptions.py](data_rules/src/data_rules/exceptions.py) |
+| 3 AI Coach | `CoachError`, `LanguageModelUnavailable`, `CacheUnavailable` | [exceptions.py](coach/src/coach/exceptions.py) |
+| 4 Web | `WebError`, `ServiceStartupError` | [exceptions.py](web/src/web/exceptions.py) |
+
+### Tests
+
+The Flask tests use Flask's test client: [test_app.py](web/tests/test_app.py) checks the pages,
+uploads and error messages, and [test_api.py](web/tests/test_api.py) checks the JSON routes.
+Every subsystem also has its own tests in its `tests/` folder. To run them all:
+
+```bash
+python run_tests.py
+```
+
 ## How the subsystems work together
 
 ```text
