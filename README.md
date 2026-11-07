@@ -27,7 +27,7 @@ If the model is not confident, the app asks for a new photo instead of guessing.
 | Hometask | Video |
 |---|---|
 | 1. Object Oriented Concepts | https://youtu.be/lTINQj-ZxsA |
-| 2. Real-Time Data Processing | link to be added |
+| 2. Real-Time Data Processing | https://youtu.be/KtGtp3LHUkw |
 | 3. Web APIs & Database Access Layers | https://youtu.be/02ozCrF4hF4?is=blFpJCwtSpvHN0sk |
 | 4. Exception Handling and Unit tests | https://youtu.be/TBVTzSooRZk |
 
