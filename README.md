@@ -22,6 +22,10 @@ If the model is not confident, the app asks for a new photo instead of guessing.
 | 3 | AI Coach & Analytics (OpenAI, Plotly dashboard) | `coach/` | Sana Mohammadi | 7224512 MDT | [README](coach/README.md) |
 | 4 | Web Interface & Deployment (Flask, Docker) | `web/` | Amirreza Seighali | 7224661 MDT | [README](web/README.md) |
 
+## Hometask 3: Web APIs & Database Access Layers
+
+**Video presentation:** https://youtu.be/02ozCrF4hF4?is=blFpJCwtSpvHN0sk
+
 ## Run the app
 
 ### With Docker (recommended)
