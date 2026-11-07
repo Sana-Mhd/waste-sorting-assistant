@@ -141,8 +141,7 @@ is never paid for twice.
 | `CoachConfig` | the settings, read from the environment, key masked when printed |
 | `Explanation`, `Summary` | the frozen objects that cross the boundary |
 
-Class diagram: **[docs/class_diagram.png](docs/class_diagram.png)**
-(redraw it with `python docs/make_class_diagram.py`).
+Class diagram: **[docs/class_diagram.png](docs/class_diagram.png)**.
 The reasoning behind the design, including which object-oriented concept sits
 where: **[docs/DESIGN_NOTES.md](docs/DESIGN_NOTES.md)**.
 
