@@ -46,6 +46,7 @@ class DummyClassifier(BaseClassifier):
         confidence: float = 0.9,
         labels: tuple[str, ...] | list[str] = MATERIALS,
     ) -> None:
+        """Remember the fixed answer; the material must be one of the labels."""
         if material not in labels:
             raise ValueError(f"Unknown material {material!r}. Known materials: {', '.join(labels)}.")
         if not 0.0 <= confidence <= 1.0:

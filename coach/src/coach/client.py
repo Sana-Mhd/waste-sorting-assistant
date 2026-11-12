@@ -23,6 +23,7 @@ class OpenAIClient:
     """Thin wrapper around the OpenAI chat completion API."""
 
     def __init__(self, config: CoachConfig | None = None) -> None:
+        """Use the given settings, or read them from the environment."""
         self.config = config or CoachConfig.from_env()
 
     def __repr__(self) -> str:

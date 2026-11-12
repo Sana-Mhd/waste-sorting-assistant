@@ -8,4 +8,5 @@ DEFAULT_DATABASE_URL = "sqlite:///data/waste.db"
 
 
 def database_url() -> str:
+    """The database address from DATABASE_URL, or the local SQLite file by default."""
     return os.environ.get("DATABASE_URL", DEFAULT_DATABASE_URL)

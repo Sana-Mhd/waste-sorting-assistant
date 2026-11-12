@@ -114,6 +114,7 @@ class CoachService:
         return self.fallback.explain(item, rule), self.fallback.source
 
     def _wrap(self, text: str, rule, source: str) -> Explanation:
+        """Put the text together with the bin and category into one Explanation."""
         return Explanation(
             text=text,
             bin=rule.bin,

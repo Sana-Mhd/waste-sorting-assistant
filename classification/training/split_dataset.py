@@ -73,6 +73,7 @@ def split_dataset(source: Path, dest: Path, seed: int = 42) -> dict[str, dict[st
 
 
 def main() -> None:
+    """Read the command line options and split the photos into train, val and test."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--source", type=Path, required=True, help="folder with one subfolder per class")
     parser.add_argument("--dest", type=Path, default=Path("data"), help="output folder (default: data)")

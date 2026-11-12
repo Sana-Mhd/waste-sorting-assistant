@@ -20,6 +20,7 @@ class Explanation:
 
     @property
     def from_language_model(self) -> bool:
+        """True if the text was written by the language model just now."""
         return self.source == "model"
 
 

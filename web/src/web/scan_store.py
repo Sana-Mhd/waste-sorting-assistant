@@ -31,6 +31,7 @@ class ScanStore:
     """
 
     def __init__(self, max_scans: int = DEFAULT_MAX_SCANS) -> None:
+        """Start empty; keep at most `max_scans` results (at least 1)."""
         if max_scans < 1:
             raise ValueError(f"max_scans must be at least 1, got {max_scans}.")
         self._max_scans = max_scans

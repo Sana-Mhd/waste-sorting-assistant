@@ -9,6 +9,8 @@ from datetime import datetime
 
 @dataclass(frozen=True)
 class Rule:
+    """Which bin a category goes into in one region, and why."""
+
     category: str       # "recyclable" | "compostable" | "landfill"
     region_code: str    # e.g. "DO" for Dortmund
     bin: str            # name of the bin the user should use
@@ -17,6 +19,8 @@ class Rule:
 
 @dataclass(frozen=True)
 class ClassificationRecord:
+    """One saved scan, as read back for the dashboard."""
+
     id: int
     item: str
     category: str

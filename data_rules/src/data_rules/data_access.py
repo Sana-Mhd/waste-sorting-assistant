@@ -14,18 +14,23 @@ from .schemas import ClassificationRecord, Rule
 
 
 def _to_naive_utc(dt: datetime | None) -> datetime | None:
+    """Convert a time with a timezone to UTC without timezone, the way SQLite stores it."""
     if dt is not None and dt.tzinfo is not None:
         return dt.astimezone(timezone.utc).replace(tzinfo=None)
     return dt
 
 
 def _check_category(category: str) -> None:
+    """Raise DataRulesError if the category is not recyclable, compostable or landfill."""
     if category not in CATEGORIES:
         raise DataRulesError(f"category must be one of {CATEGORIES}, got {category!r}")
 
 
 class DataAccessLayer:
+    """Reads and writes regions, rules, users and scan results. No SQL outside this class."""
+
     def __init__(self, session_factory: sessionmaker):
+        """Keep the session factory; every method opens its own short session with it."""
         self._sf = session_factory
 
     # ---- regions and rules (configuration) ---------------------------------
@@ -44,11 +49,13 @@ class DataAccessLayer:
             s.commit()
 
     def list_regions(self) -> list[tuple[str, str]]:
+        """All regions as (code, name) pairs, sorted by name."""
         with self._sf() as s:
             rows = s.scalars(select(Region).order_by(Region.name)).all()
             return [(r.code, r.name) for r in rows]
 
     def region_exists(self, code: str) -> bool:
+        """True if a region with this code is stored."""
         with self._sf() as s:
             return s.get(Region, code.strip().upper()) is not None
 
@@ -83,6 +90,7 @@ class DataAccessLayer:
             return self._rule(row) if row else None
 
     def get_rules(self, region_code: str) -> list[Rule]:
+        """All rules of one region, sorted by category."""
         with self._sf() as s:
             rows = s.scalars(
                 select(RuleRow)
@@ -94,6 +102,7 @@ class DataAccessLayer:
     # ---- users and classification results ----------------------------------
 
     def get_or_create_user(self, username: str) -> int:
+        """Return the id of the user, creating the user first if needed."""
         username = username.strip()
         if not username:
             raise DataRulesError("username must not be empty")
@@ -177,4 +186,5 @@ class DataAccessLayer:
 
     @staticmethod
     def _rule(row: RuleRow) -> Rule:
+        """Turn a database row into the plain Rule object the other subsystems use."""
         return Rule(category=row.category, region_code=row.region_code, bin=row.bin, reason=row.reason)

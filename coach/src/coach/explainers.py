@@ -69,10 +69,12 @@ class TemplateExplainer(BaseExplainer):
     source = "template"
 
     def __init__(self, language: str = "en", max_words: int = MAX_WORDS) -> None:
+        """Choose the language (English if unknown) and the word limit."""
         self.language = language if language in _CATEGORY_WORDS else "en"
         self.max_words = max_words
 
     def explain(self, item: str, rule) -> str:
+        """Fill the item, bin and reason into a fixed sentence."""
         words = _CATEGORY_WORDS[self.language][rule.category]
         if self.language == "de":
             text = f"{item.capitalize()} {words}. Bitte in die {rule.bin} geben. {rule.reason}"
@@ -91,10 +93,12 @@ class LanguageModelExplainer(BaseExplainer):
     source = "model"
 
     def __init__(self, client: OpenAIClient | None = None, config: CoachConfig | None = None) -> None:
+        """Use the given client and settings, or build them from the environment."""
         self.config = config or CoachConfig.from_env()
         self.client = client or OpenAIClient(self.config)
 
     def is_available(self) -> bool:
+        """True when an API key is configured."""
         return self.client.is_available()
 
     def build_prompt(self, item: str, rule) -> str:
@@ -110,5 +114,10 @@ class LanguageModelExplainer(BaseExplainer):
         )
 
     def explain(self, item: str, rule) -> str:
+        """Ask the language model and cut the answer to the word limit.
+
+        Raises:
+            LanguageModelUnavailable: the service could not be reached.
+        """
         text = self.client.send(self.build_prompt(item, rule))
         return shorten(text, self.config.max_words)

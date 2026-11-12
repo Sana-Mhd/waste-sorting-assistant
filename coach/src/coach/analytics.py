@@ -145,4 +145,5 @@ class AnalyticsService:
         )
 
     def total_scans(self, region_code: str | None = None) -> int:
+        """Number of stored scans, for one region or for all."""
         return int(len(self.frame(region_code)))

@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 class Preprocessor(Protocol):
     """Anything that turns a photo (path or bytes) into a model input tensor."""
 
-    def process(self, image: ImageInput) -> torch.Tensor: ...
+    def process(self, image: ImageInput) -> torch.Tensor:
+        """Return the model input tensor for one photo."""
 
 
 class ClassificationEngine:
@@ -36,6 +37,13 @@ class ClassificationEngine:
         preprocessor: Preprocessor,
         confidence_threshold: float = DEFAULT_CONFIDENCE_THRESHOLD,
     ) -> None:
+        """Store the parts; the threshold must be between 0 and 1.
+
+        Args:
+            classifier: turns a tensor into (material, probability) pairs.
+            preprocessor: turns a photo into a tensor.
+            confidence_threshold: below this the result is marked as not confident.
+        """
         if not 0.0 <= confidence_threshold <= 1.0:
             raise ValueError(f"Confidence threshold must be between 0 and 1, got {confidence_threshold}.")
         self.classifier = classifier

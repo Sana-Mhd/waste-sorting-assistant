@@ -32,6 +32,7 @@ class BasePage(ABC):
     endpoint: str = ""      # the name of the page's Flask route, used for the links
 
     def __init__(self, services: AppServices) -> None:
+        """Keep the services of the other subsystems that every page uses."""
         self.services = services
 
     @property
@@ -52,6 +53,7 @@ class ScanPage(BasePage):
     endpoint = "scan_page"
 
     def __init__(self, services: AppServices, store: ScanStore | None = None) -> None:
+        """Build the scan workflow and the store that keeps recent results."""
         super().__init__(services)
         self.workflow = ScanWorkflow(services)
         self.store = store or ScanStore()
@@ -103,6 +105,7 @@ class DashboardPage(BasePage):
     endpoint = "dashboard_page"
 
     def render(self, region_code: str) -> str:
+        """Show the numbers and charts, or a short note when there are no scans yet."""
         analytics = self.services.analytics
         summary = analytics.summary(region_code)
         if summary.total_scans == 0:
@@ -133,6 +136,7 @@ class AboutPage(BasePage):
     endpoint = "about_page"
 
     def render(self, region_code: str) -> str:
+        """Show the project description and whether the model and the AI coach are active."""
         return render_template(
             "about.html",
             page=self,

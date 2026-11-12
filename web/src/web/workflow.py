@@ -26,10 +26,12 @@ class ScanOutcome:
 
     @property
     def is_confident(self) -> bool:
+        """True if the model was sure enough to give an answer."""
         return self.result.is_confident
 
     @property
     def was_saved(self) -> bool:
+        """True if the scan was stored in the database."""
         return self.saved_id is not None
 
 
@@ -37,6 +39,7 @@ class ScanWorkflow:
     """Classify a photo, explain the result and store it."""
 
     def __init__(self, services: AppServices) -> None:
+        """Keep the services of the other subsystems."""
         self.services = services
 
     def run(self, image: bytes, region_code: str) -> ScanOutcome:

@@ -40,6 +40,7 @@ class CoachConfig:
 
     @property
     def has_api_key(self) -> bool:
+        """True if OPENAI_API_KEY was set."""
         return bool(self.api_key)
 
     def __repr__(self) -> str:

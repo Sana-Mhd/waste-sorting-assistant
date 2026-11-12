@@ -48,23 +48,28 @@ def create_api(services: AppServices, config: WebConfig) -> Blueprint:
 
     @api.get("/regions")
     def regions() -> ResponseReturnValue:
+        """All regions as a list of code and name."""
         return jsonify([{"code": code, "name": name} for code, name in services.regions()])
 
     @api.get("/rules")
     def rules() -> ResponseReturnValue:
+        """The bin rules of the region."""
         return jsonify([asdict(rule) for rule in services.dal.get_rules(requested_region())])
 
     @api.get("/results")
     def results() -> ResponseReturnValue:
+        """Every saved scan of the region, oldest first."""
         records = services.dal.get_results(region_code=requested_region())
         return jsonify([record_to_json(record) for record in records])
 
     @api.get("/summary")
     def summary() -> ResponseReturnValue:
+        """The dashboard numbers of the region."""
         return jsonify(asdict(services.analytics.summary(requested_region())))
 
     @api.errorhandler(DataRulesError)
     def unknown_region(error: DataRulesError) -> ResponseReturnValue:
+        """Answer an unknown region with a JSON error and status 404."""
         return jsonify(error=str(error)), 404
 
     return api

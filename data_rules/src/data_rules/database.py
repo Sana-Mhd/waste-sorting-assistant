@@ -10,6 +10,7 @@ from .models import Base
 
 
 def _enable_foreign_keys(dbapi_conn, _record):
+    """Switch on foreign keys for a new SQLite connection."""
     # SQLite ignores foreign keys unless this is switched on per connection.
     cur = dbapi_conn.cursor()
     cur.execute("PRAGMA foreign_keys=ON")
@@ -17,6 +18,7 @@ def _enable_foreign_keys(dbapi_conn, _record):
 
 
 def make_engine(url: str | None = None, **kwargs) -> Engine:
+    """Create the database engine; for a SQLite file, create its folder first."""
     url = url or database_url()
     if url.startswith("sqlite:///") and ":memory:" not in url:
         Path(url.removeprefix("sqlite:///")).parent.mkdir(parents=True, exist_ok=True)
@@ -27,10 +29,12 @@ def make_engine(url: str | None = None, **kwargs) -> Engine:
 
 
 def init_db(engine: Engine) -> None:
+    """Create all tables that do not exist yet."""
     Base.metadata.create_all(engine)
 
 
 def make_session_factory(engine: Engine) -> sessionmaker:
+    """Create the factory that opens database sessions for this engine."""
     return sessionmaker(engine, expire_on_commit=False)
 
 

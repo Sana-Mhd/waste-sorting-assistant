@@ -24,6 +24,7 @@ class ImagePreprocessor:
     """Validate a photo (path or bytes) and convert it to a tensor of shape (1, 3, 224, 224)."""
 
     def __init__(self, max_image_mb: float = DEFAULT_MAX_IMAGE_MB) -> None:
+        """Set the size limit and build the resize, crop and normalise steps."""
         if max_image_mb <= 0:
             raise ValueError(f"max_image_mb must be greater than 0, got {max_image_mb}.")
         self.max_image_mb = max_image_mb
@@ -88,4 +89,5 @@ class ImagePreprocessor:
         return data
 
     def _too_large_message(self) -> str:
+        """The error text shown when a photo is over the size limit."""
         return f"The image is too large. The maximum size is {self.max_image_mb:g} MB."

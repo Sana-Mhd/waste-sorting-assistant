@@ -64,6 +64,7 @@ def prepare(zip_path: Path, dest: Path) -> Counter:
 
 
 def main() -> None:
+    """Read the command line options and unpack the dataset zip into one folder per material."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--zip", type=Path, required=True)
     parser.add_argument("--dest", type=Path, default=Path("raw"))

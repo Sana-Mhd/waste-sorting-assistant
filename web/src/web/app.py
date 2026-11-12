@@ -70,6 +70,7 @@ def _show_startup_error(app: Flask, config: WebConfig, message: str) -> None:
 
     @app.before_request
     def startup_error() -> tuple[str, int] | None:
+        """Show the error page for every page; let CSS and other static files through."""
         if request.endpoint == "static":
             return None
         return render_template("startup_error.html", app_title=config.title, message=message), 503
@@ -96,10 +97,12 @@ def _add_routes(app: Flask, services: AppServices, config: WebConfig, max_image_
 
     @app.get("/", endpoint=scan_page.endpoint)
     def show_scan_page() -> str:
+        """The start page: upload form and, after a scan, its result."""
         return scan_page.render(selected_region())
 
     @app.post("/scan")
     def upload_photo() -> Response | tuple[str, int]:
+        """Classify the uploaded photo, then send the browser to its result."""
         region_code = selected_region()
         try:
             scan_id = scan_page.handle_upload(request.files.get("photo"), region_code)
@@ -110,22 +113,27 @@ def _add_routes(app: Flask, services: AppServices, config: WebConfig, max_image_
 
     @app.get("/dashboard", endpoint=dashboard_page.endpoint)
     def show_dashboard_page() -> str:
+        """The municipality dashboard with statistics and charts."""
         return dashboard_page.render(selected_region())
 
     @app.get("/about", endpoint=about_page.endpoint)
     def show_about_page() -> str:
+        """A short page about the project and its status."""
         return about_page.render(selected_region())
 
     @app.get("/plotly.min.js")
     def plotly_js() -> Response:
+        """The chart library, served locally so the dashboard works without internet."""
         return Response(plotly_script(), mimetype="text/javascript")
 
     @app.get("/health")
     def health() -> dict[str, str]:
+        """Used by Docker to check that the app is running."""
         return {"status": "ok"}
 
     @app.errorhandler(RequestEntityTooLarge)
     def upload_too_large(_error: RequestEntityTooLarge) -> tuple[str, int]:
+        """Show a friendly message instead of an error page when the photo is too big."""
         message = f"The image is too large. The maximum size is {max_image_mb:g} MB."
         return scan_page.render(selected_region(), error=message), 413
 

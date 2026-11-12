@@ -19,6 +19,7 @@ DEFAULT_RULES_DIR = Path(__file__).parent / "rules"
 
 
 def rules_dir() -> Path:
+    """The folder with the rule files: RULES_DIR if set, else the built-in rules folder."""
     return Path(os.environ.get("RULES_DIR", DEFAULT_RULES_DIR))
 
 
@@ -53,6 +54,7 @@ def load_rule_files(directory: Path | str | None = None) -> list[dict]:
 
 
 def seed_database(dal: DataAccessLayer, directory: Path | str | None = None) -> None:
+    """Store every region and its rules from the rule files. Safe to run again."""
     for data in load_rule_files(directory):
         code = data["region"]["code"]
         dal.add_region(code, data["region"]["name"])

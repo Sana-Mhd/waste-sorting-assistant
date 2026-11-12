@@ -17,7 +17,10 @@ _FALLBACK = {
 
 
 class RuleEngine:
+    """Finds the right bin for a category in a region, with a safe fallback."""
+
     def __init__(self, dal: DataAccessLayer):
+        """Keep the data access layer that stores the rules."""
         self._dal = dal
 
     def get_rule(self, category: str, region: str) -> Rule:

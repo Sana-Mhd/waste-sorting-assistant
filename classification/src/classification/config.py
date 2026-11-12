@@ -46,6 +46,7 @@ class ClassificationConfig:
 
 
 def _read_float(name: str, default: float) -> float:
+    """Read a number from the environment variable `name`, or return `default` if it is not set."""
     raw = os.environ.get(name)
     if raw is None or raw.strip() == "":
         return default

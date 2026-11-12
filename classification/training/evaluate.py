@@ -118,6 +118,7 @@ def evaluate(name: str, folder: Path, classifier: MobileNetClassifier, preproces
 
 
 def main() -> None:
+    """Read the command line options and evaluate the trained model on the test photos."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data-dir", type=Path, default=Path("data"), help="uses <data-dir>/test")
     parser.add_argument("--model", type=Path, default=Path("models/mobilenet_waste.pt"))

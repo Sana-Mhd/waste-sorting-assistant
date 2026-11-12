@@ -120,6 +120,7 @@ def train_stage(name: str, model: nn.Module, loaders: dict[str, DataLoader], cri
 
 
 def main() -> None:
+    """Read the command line options, train the model and save the weights."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--output-dir", type=Path, default=Path("models"))

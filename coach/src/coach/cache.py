@@ -52,18 +52,22 @@ class MemoryCache(BaseCache):
     """Cache that lives only as long as the program runs."""
 
     def __init__(self) -> None:
+        """Start with an empty dictionary."""
         self._store: dict[str, str] = {}
 
     def get(self, key: str) -> str | None:
+        """The stored text for this key, or None."""
         return self._store.get(key)
 
     def set(self, key: str, text: str) -> None:
+        """Store the text under this key."""
         self._store[key] = text
 
     def __len__(self) -> int:
         return len(self._store)
 
     def clear(self) -> None:
+        """Forget every stored text."""
         self._store.clear()
 
 
@@ -79,6 +83,11 @@ class SQLiteCache(BaseCache):
     """
 
     def __init__(self, path: str | Path) -> None:
+        """Open the cache file and create its table if needed.
+
+        Raises:
+            CacheUnavailable: the file or its folder cannot be created or opened.
+        """
         self.path = Path(path)
         try:
             if self.path.parent != Path(""):
@@ -89,9 +98,11 @@ class SQLiteCache(BaseCache):
             raise CacheUnavailable(f"cannot open the cache at {self.path}") from exc
 
     def _connect(self) -> sqlite3.Connection:
+        """Open a new connection to the cache file."""
         return sqlite3.connect(self.path)
 
     def get(self, key: str) -> str | None:
+        """The stored text for this key, or None (also when the file cannot be read)."""
         try:
             with self._connect() as conn:
                 row = conn.execute(
@@ -103,6 +114,7 @@ class SQLiteCache(BaseCache):
         return row[0] if row else None
 
     def set(self, key: str, text: str) -> None:
+        """Store or replace the text for this key; a failed write is only logged."""
         now = datetime.now(timezone.utc).isoformat(timespec="seconds")
         try:
             with self._connect() as conn:
@@ -122,5 +134,6 @@ class SQLiteCache(BaseCache):
             return 0
 
     def clear(self) -> None:
+        """Delete every stored explanation."""
         with self._connect() as conn:
             conn.execute("DELETE FROM explanation_cache")

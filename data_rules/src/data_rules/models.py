@@ -11,10 +11,11 @@ def utcnow() -> datetime:
 
 
 class Base(DeclarativeBase):
-    pass
+    """Parent class of all tables."""
 
 
 class User(Base):
+    """A person who scans items (optional; scans can be anonymous)."""
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -23,6 +24,7 @@ class User(Base):
 
 
 class Region(Base):
+    """A city with its own recycling rules, e.g. DO = Dortmund."""
     __tablename__ = "region"
 
     code: Mapped[str] = mapped_column(String(16), primary_key=True)   # "DO"
@@ -32,6 +34,7 @@ class Region(Base):
 
 
 class Item(Base):
+    """A recognised material name, stored once and shared by many scans."""
     __tablename__ = "item"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -53,6 +56,7 @@ class RuleRow(Base):
 
 
 class ClassificationResultRow(Base):
+    """One saved scan: which item, which category, how confident, where and when."""
     __tablename__ = "classification_result"
     __table_args__ = (
         CheckConstraint("confidence >= 0 AND confidence <= 1", name="ck_confidence_range"),
