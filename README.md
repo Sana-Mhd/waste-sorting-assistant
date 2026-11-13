@@ -31,6 +31,9 @@ If the model is not confident, the app asks for a new photo instead of guessing.
 | 3. Web APIs & Database Access Layers | https://youtu.be/02ozCrF4hF4?is=blFpJCwtSpvHN0sk |
 | 4. Exception Handling and Unit tests | https://youtu.be/TBVTzSooRZk |
 
+## Video Capstone Project
+https://youtu.be/K4CbYXK1t1U
+
 ## Run the app
 
 ### With Docker (recommended)
